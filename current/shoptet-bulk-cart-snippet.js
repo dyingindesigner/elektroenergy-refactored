@@ -576,7 +576,7 @@
 #${ENTRY_HOST_ID} {
   display: flex;
   width: 100%;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   margin: 0 0 14px 0;
 }
@@ -989,7 +989,7 @@
     if (!activeCartContainer) {
       entryHost.style.position = "fixed";
       entryHost.style.left = "14px";
-      entryHost.style.right = "14px";
+      entryHost.style.right = "auto";
       entryHost.style.bottom = "14px";
       entryHost.style.top = "auto";
       entryHost.style.width = "auto";
