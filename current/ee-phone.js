@@ -1,6 +1,6 @@
 (function () {
     var core = window.EE_CORE || {};
-    var STATE = { phase: "init", observer: null, lastFocused: null, lastCountryValue: null };
+    var STATE = { phase: "init", observer: null, lastFocused: null, lastCountryValue: null, syncing: false };
     var INSERTED_CLASS = "ee-phone-retail";
     var PHONE_ID = "ee-retail-phone";
     var PHONE_CODE_ID = "ee-retail-phone-code";
@@ -273,6 +273,7 @@
     }
 
     function syncRetailToOriginal() {
+        if (STATE.syncing) return;
         var form = getForm();
         if (!form) return;
 
@@ -287,8 +288,16 @@
         }
 
         if (originalSelect && retailSelect) {
+            var changed = originalSelect.value !== retailSelect.value;
             originalSelect.value = retailSelect.value;
-            originalSelect.dispatchEvent(new Event("change", { bubbles: true }));
+            if (changed) {
+                STATE.syncing = true;
+                try {
+                    originalSelect.dispatchEvent(new Event("change", { bubbles: true }));
+                } finally {
+                    STATE.syncing = false;
+                }
+            }
         }
     }
 
@@ -350,6 +359,7 @@
         });
 
         form.addEventListener("change", function () {
+            if (STATE.syncing) return;
             syncRetailToOriginal();
             toggleMode();
             syncFromOriginalIfAvailable();
