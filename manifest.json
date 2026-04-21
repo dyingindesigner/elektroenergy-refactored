@@ -2,73 +2,73 @@
     {
         "name":  "elektroenergy-head-custom.css",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/lightee-scripts@main/elektroenergy-head-custom.css",
-        "sha256":  "d3e2f2614622bd750a5586f563cf2e7b86bc2826a091eb0710560543bf69ef15",
-        "downloaded_at":  "2026-04-21T11:49:34"
+        "sha256":  "6527823418de67d38741e47589ba8c0232d248856cccd017bba63e0275076c31",
+        "downloaded_at":  "2026-04-21T12:26:44"
     },
     {
         "name":  "b2b-silent-cart-popup.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/lightee-scripts@main/b2b-silent-cart-popup.js",
-        "sha256":  "fa80c985265f939acb0237676cdca8000f22d86923dcea4d78f64880ef6b7727",
-        "downloaded_at":  "2026-04-21T11:49:34"
+        "sha256":  "d263ef73b7e7df27d6dd7cbba917d105f2c4976911c82829a70fe69d665ab97f",
+        "downloaded_at":  "2026-04-21T12:26:44"
     },
     {
         "name":  "b2b-ee.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/lightee-scripts@main/b2b-ee.js",
-        "sha256":  "fc41fb4cd10b2b232d0d69831a13146575c8733e44f280081d72d5eb1c9c560d",
-        "downloaded_at":  "2026-04-21T11:49:34"
+        "sha256":  "52aa232223681310c2a39e96b3a06ce8952104a6c5e836aa7791b3b79583e4ed",
+        "downloaded_at":  "2026-04-21T12:26:44"
     },
     {
         "name":  "productarrows.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/lightee-scripts@main/productarrows.js",
-        "sha256":  "f0c2d2a5bd50ad6ca5b24651c41e6d3fdfe31ba308b481128c0f99a49360293b",
-        "downloaded_at":  "2026-04-21T11:49:34"
+        "sha256":  "421a8778b4d8af35d6698ed8eed1eeea6f62b9bb220274d91470fc08a9684c28",
+        "downloaded_at":  "2026-04-21T12:26:44"
     },
     {
         "name":  "badge-ee.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/lightee-scripts@main/badge-ee.js",
-        "sha256":  "2bb6da934cb89236a6ebc38ba3ef4cdbae70fd7cb680fdb28e798d4fd9fc2fea",
-        "downloaded_at":  "2026-04-21T11:49:34"
+        "sha256":  "62af24e552925a5bf40fa7a819afcb58787d066284aad67ba70c88b7dc9f611b",
+        "downloaded_at":  "2026-04-21T12:26:44"
     },
     {
         "name":  "elektroenergy-login-return-url.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/lightee-scripts@main/elektroenergy-login-return-url.js",
-        "sha256":  "8dd91ecc610cdca88beb4279ab49c502765ccac61de3ee34e6f2c1f74cba2062",
-        "downloaded_at":  "2026-04-21T11:49:34"
+        "sha256":  "77df4783ac4c13e8bc314ed3a2b87e201459b1e24eea78a4c29622ef9d2668dc",
+        "downloaded_at":  "2026-04-21T12:26:44"
     },
     {
         "name":  "elektroenergy-account-hover-menu.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/lightee-scripts@main/elektroenergy-account-hover-menu.js",
-        "sha256":  "c692af31d86af77da4e376b932d993f7ff6f6b993c05029d759df49d6c1dc670",
-        "downloaded_at":  "2026-04-21T11:49:34"
+        "sha256":  "ec8f760f8d804f84578d299d58240551e3c224cafc4102fdf43cb2ab722bcdc1",
+        "downloaded_at":  "2026-04-21T12:26:44"
     },
     {
         "name":  "ee-phone.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/lightee-scripts@main/ee-phone.js",
-        "sha256":  "3a30c2a835d18bbb2ce92f3a1a9ae0484c31f3ed6476b96ac7c0162b7024b29c",
-        "downloaded_at":  "2026-04-21T11:49:34"
+        "sha256":  "7e94024c6922cdcb0ebeed6320ac48f8a5e4a66b723cffad823d6010fc96ebdc",
+        "downloaded_at":  "2026-04-21T12:26:44"
     },
     {
         "name":  "elektroanalytics.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/lightee-scripts@main/elektroanalytics.js",
-        "sha256":  "b352c4ddd6eb0c41e9211a70156e603f385ec318e0cf80195ddb035c385fad26",
-        "downloaded_at":  "2026-04-21T11:49:34"
+        "sha256":  "f619a9ae0cb489674fcccb2b0af29b7a56008e6c22f9d6fb2482d3667fe5c940",
+        "downloaded_at":  "2026-04-21T12:26:44"
     },
     {
         "name":  "atypical-shipping-notice.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/lightee-scripts@main/atypical-shipping-notice.js",
-        "sha256":  "2e616c8599a050c24ab493582ab161c5be963161b9604e47b729725bea728504",
-        "downloaded_at":  "2026-04-21T11:49:34"
+        "sha256":  "0ba4f05acd16ac034e4727c3fdaf9c5591abebd3fc72150fdbf4a05f2ea46dc0",
+        "downloaded_at":  "2026-04-21T12:26:44"
     },
     {
         "name":  "checkout-notice.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/lightee-scripts@main/checkout-notice.js",
-        "sha256":  "d18cbc3a25165999f45423617b7ad9d0e0f0270953dd976fe985083c403ad3c5",
-        "downloaded_at":  "2026-04-21T11:49:34"
+        "sha256":  "b69da6b6ceff018c6e38a3308809977b0320f072d6c3ec6ce70d34adf518e296",
+        "downloaded_at":  "2026-04-21T12:26:44"
     },
     {
         "name":  "shoptet-bulk-cart-snippet.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/shoptet-bulk-order-cdn@5cf0b5077ec5e0e97f3ab812caf263b3bd3af6ec/shoptet-bulk-cart-snippet.js",
-        "sha256":  "d65e4da513641d11b637c1be8acd40c4acd82dba5b44d2ba61a671e1bae6abd8",
-        "downloaded_at":  "2026-04-21T11:49:34"
+        "sha256":  "1c010c7a195c3773cf84b5ecc324e86a7a39ce9b29197bb6dbff438c8cdb77a6",
+        "downloaded_at":  "2026-04-21T12:26:44"
     }
 ]
