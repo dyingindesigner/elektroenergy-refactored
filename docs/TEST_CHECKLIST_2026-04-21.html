@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Electroenergy Test Checklist 2026-04-21</title>
+  <style>
+    :root { --bg:#0b1020; --card:#121a33; --text:#eaf0ff; --muted:#9fb0da; --ok:#22c55e; --line:#27345f; }
+    body { margin:0; font:14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); }
+    .wrap { max-width:980px; margin:24px auto; padding:0 16px; }
+    .top { display:flex; gap:10px; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    h1 { font-size:20px; margin:0; }
+    .muted { color:var(--muted); font-size:12px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; margin:10px 0; }
+    h2 { margin:0 0 8px; font-size:16px; }
+    ul { list-style:none; padding:0; margin:0; display:grid; gap:8px; }
+    li { display:flex; gap:10px; align-items:flex-start; border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
+    input[type="checkbox"] { margin-top:2px; transform:scale(1.15); }
+    code { background:#0d142b; border:1px solid var(--line); padding:2px 5px; border-radius:5px; }
+    .controls { display:flex; gap:8px; flex-wrap:wrap; }
+    button { background:#1b2a53; color:var(--text); border:1px solid #32477f; border-radius:8px; padding:7px 10px; cursor:pointer; }
+    button:hover { filter:brightness(1.08); }
+    .stats { color:var(--muted); font-size:13px; }
+    .done { color:var(--ok); font-weight:600; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Electroenergy Refactor Test Checklist</h1>
+        <div class="muted">Ukladanie stavu je automatické (LocalStorage).</div>
+      </div>
+      <div class="controls">
+        <button id="checkAll">Zaškrtnúť všetko</button>
+        <button id="uncheckAll">Odznačiť všetko</button>
+        <button id="exportState">Export stavu</button>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+
+    <div class="card">
+      <h2>0) Pred testom</h2>
+      <ul>
+        <li><input type="checkbox" data-id="p0_1"><label>Hard refresh (<code>Ctrl+F5</code>) po nasadení nových CDN odkazov.</label></li>
+        <li><input type="checkbox" data-id="p0_2"><label>DevTools Console: bez červených chýb po načítaní.</label></li>
+        <li><input type="checkbox" data-id="p0_3"><label>Over verziu bulk skriptu: <code>window.__shoptetBulkCartVersion</code>.</label></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>1) ee-core.js</h2>
+      <ul>
+        <li><input type="checkbox" data-id="p1_1"><label>Preklik home -> kategória -> detail -> košík -> login -> klient bez JS chýb.</label></li>
+        <li><input type="checkbox" data-id="p1_2"><label>Console: <code>window.EE_CORE && Object.keys(window.EE_CORE)</code> vracia helpery.</label></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>2) B2B / Cart / Badge / Login flow</h2>
+      <ul>
+        <li><input type="checkbox" data-id="p2_1"><label>B2B add-to-cart popup nezostáva otvorený.</label></li>
+        <li><input type="checkbox" data-id="p2_2"><label>B2B ceny sú stabilné (net primárne, gross sekundárne).</label></li>
+        <li><input type="checkbox" data-id="p2_3"><label>Product arrows: rýchle +/- končí správnym množstvom v košíku.</label></li>
+        <li><input type="checkbox" data-id="p2_4"><label>Badge sa aktualizuje bez duplikátov.</label></li>
+        <li><input type="checkbox" data-id="p2_5"><label>Login/logout return flow funguje bez loopu.</label></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>3) UX scripts</h2>
+      <ul>
+        <li><input type="checkbox" data-id="p3_1"><label>Account menu: desktop hover + mobile tap + Esc/šípky.</label></li>
+        <li><input type="checkbox" data-id="p3_2"><label>ee-phone: retail/wholesale prepínanie + validácia submitu.</label></li>
+        <li><input type="checkbox" data-id="p3_3"><label>Atypical shipping notice: PDP + košík, bez duplikácie.</label></li>
+        <li><input type="checkbox" data-id="p3_4"><label>Checkout notice je len raz a ostáva správne umiestnený.</label></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>4) Bulk ordering</h2>
+      <ul>
+        <li><input type="checkbox" data-id="p4_1"><label>Home: bulk tlačidlo skryté (pri all-except-home).</label></li>
+        <li><input type="checkbox" data-id="p4_2"><label>Kategória: bulk tlačidlo viditeľné.</label></li>
+        <li><input type="checkbox" data-id="p4_3"><label>Vyhľadávanie + pridanie do draftu funguje.</label></li>
+        <li><input type="checkbox" data-id="p4_4"><label>Import CSV/XLSX: progress + invalid retry/remove funguje.</label></li>
+        <li><input type="checkbox" data-id="p4_5"><label>Pridanie do košíka prejde bez rozbitia UI.</label></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>5) Analytics</h2>
+      <ul>
+        <li><input type="checkbox" data-id="p5_1"><label>Network ukazuje analytics requesty po pageview/click.</label></li>
+        <li><input type="checkbox" data-id="p5_2"><label>Payload obsahuje <code>schema_version</code> a <code>script_version</code>.</label></li>
+        <li><input type="checkbox" data-id="p5_3"><label>Nevidno zjavné duplicitné pageviews pre ten istý route state.</label></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>6) Full parity checks (doplnok k MD)</h2>
+      <ul>
+        <li><input type="checkbox" data-id="p6_1"><label>Console: <code>document.querySelectorAll('.ee-qty-wrap--busy').length</code> je po dokončení akcií <code>0</code>.</label></li>
+        <li><input type="checkbox" data-id="p6_2"><label>Console: <code>sessionStorage.getItem('ee_returnAfterLogin')</code> obsahuje JSON s <code>reason</code> a <code>flowId</code>.</label></li>
+        <li><input type="checkbox" data-id="p6_3"><label>Console: <code>document.querySelector('.ee-account-hover-panel')</code> existuje po otvorení menu.</label></li>
+        <li><input type="checkbox" data-id="p6_4"><label>Console: <code>document.querySelector('#register-form')?.dataset?.eePhoneBound</code> je <code>1</code>.</label></li>
+        <li><input type="checkbox" data-id="p6_5"><label>Console: <code>document.querySelectorAll('[data-ee-atyp-notice]').length</code> nepresiahne 1 na jednej stránke.</label></li>
+        <li><input type="checkbox" data-id="p6_6"><label>Console: <code>document.querySelectorAll('#shipping-slovakia-only-notice').length</code> je <code>1</code> v checkoute.</label></li>
+        <li><input type="checkbox" data-id="p6_7"><label>Console: <code>window.EE_BULK_RENDER_MODE='cart-only'</code> + refresh => bulk tlačidlo len na košíku.</label></li>
+        <li><input type="checkbox" data-id="p6_8"><label>Console: <code>window.EE_BULK_RENDER_MODE='all-except-home'</code> + refresh => bulk tlačidlo aj na kategórii.</label></li>
+        <li><input type="checkbox" data-id="p6_9"><label>Bulk: po vymazaní všetkých položiek z košíka tlačidlo Bulk objednávanie NEzmizne.</label></li>
+        <li><input type="checkbox" data-id="p6_10"><label>Bulk import: invalid položka má dostupné akcie Retry/Odstrániť.</label></li>
+        <li><input type="checkbox" data-id="p6_11"><label>Bulk search: rýchle písanie nevracia staré výsledky (stale guard).</label></li>
+        <li><input type="checkbox" data-id="p6_12"><label>Console: <code>[...document.scripts].map(s=>s.src).filter(s=>s.includes('elektroenergy-refactored'))</code> obsahuje všetky nové CDN URL.</label></li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const KEY = "ee_test_checklist_2026_04_21";
+      const boxes = Array.from(document.querySelectorAll('input[type="checkbox"][data-id]'));
+      const statsEl = document.getElementById("stats");
+
+      function load() {
+        try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { return {}; }
+      }
+      function save(state) {
+        localStorage.setItem(KEY, JSON.stringify(state));
+      }
+      function refreshStats() {
+        const done = boxes.filter(b => b.checked).length;
+        statsEl.innerHTML = `Hotovo: <span class="done">${done}</span> / ${boxes.length}`;
+      }
+
+      const state = load();
+      boxes.forEach((b) => {
+        b.checked = !!state[b.dataset.id];
+        b.addEventListener("change", () => {
+          state[b.dataset.id] = b.checked;
+          save(state);
+          refreshStats();
+        });
+      });
+
+      document.getElementById("checkAll").addEventListener("click", () => {
+        boxes.forEach((b) => { b.checked = true; state[b.dataset.id] = true; });
+        save(state); refreshStats();
+      });
+      document.getElementById("uncheckAll").addEventListener("click", () => {
+        boxes.forEach((b) => { b.checked = false; state[b.dataset.id] = false; });
+        save(state); refreshStats();
+      });
+      document.getElementById("exportState").addEventListener("click", () => {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "ee-test-checklist-state.json";
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+
+      refreshStats();
+    })();
+  </script>
+</body>
+</html>

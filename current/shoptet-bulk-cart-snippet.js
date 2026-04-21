@@ -945,44 +945,77 @@
   root.appendChild(drawer);
   document.body.appendChild(root);
 
-  const cartInner =
-    document.querySelector('div.cart-inner[data-testid="tableCart"]') ||
-    document.querySelector(".cart-inner") ||
-    document.querySelector(".cart-content") ||
-    document.querySelector("#content");
   const entryHost = document.createElement("div");
   entryHost.id = ENTRY_HOST_ID;
-  const originalCartPaddingTop = cartInner
-    ? Number.parseFloat(window.getComputedStyle(cartInner).paddingTop || "0") || 0
-    : 0;
-  if (cartInner) {
-    cartInner.prepend(entryHost);
-  } else {
-    entryHost.style.position = "fixed";
-    entryHost.style.left = "14px";
-    entryHost.style.right = "14px";
-    entryHost.style.bottom = "14px";
-    entryHost.style.zIndex = "2147483644";
-    document.body.appendChild(entryHost);
-  }
+  document.body.appendChild(entryHost);
   entryHost.appendChild(fab);
+  const cartPaddingTopMap = new WeakMap();
+  let activeCartContainer = null;
+
+  function getCartContainer() {
+    return (
+      document.querySelector('div.cart-inner[data-testid="tableCart"]') ||
+      document.querySelector(".cart-inner") ||
+      document.querySelector(".cart-content") ||
+      null
+    );
+  }
+
+  function ensureEntryHostMounted() {
+    const container = getCartContainer();
+    if (container) {
+      if (entryHost.parentElement !== container) {
+        if (entryHost.parentElement) entryHost.parentElement.removeChild(entryHost);
+        container.prepend(entryHost);
+      }
+      activeCartContainer = container;
+      if (!cartPaddingTopMap.has(container)) {
+        cartPaddingTopMap.set(
+          container,
+          Number.parseFloat(window.getComputedStyle(container).paddingTop || "0") || 0
+        );
+      }
+      return;
+    }
+    if (entryHost.parentElement !== document.body) {
+      if (entryHost.parentElement) entryHost.parentElement.removeChild(entryHost);
+      document.body.appendChild(entryHost);
+    }
+    activeCartContainer = null;
+  }
 
   function applyEntryHostLayout() {
-    if (!cartInner) return;
-    const currentPosition = window.getComputedStyle(cartInner).position;
-    if (currentPosition === "static") cartInner.style.position = "relative";
+    ensureEntryHostMounted();
+    if (!activeCartContainer) {
+      entryHost.style.position = "fixed";
+      entryHost.style.left = "14px";
+      entryHost.style.right = "14px";
+      entryHost.style.bottom = "14px";
+      entryHost.style.top = "auto";
+      entryHost.style.width = "auto";
+      entryHost.style.zIndex = "2147483644";
+      return;
+    }
+
+    const originalCartPaddingTop = cartPaddingTopMap.get(activeCartContainer) || 0;
+    const currentPosition = window.getComputedStyle(activeCartContainer).position;
+    if (currentPosition === "static") activeCartContainer.style.position = "relative";
     if (window.innerWidth <= 980) {
-      cartInner.style.paddingTop = `${originalCartPaddingTop}px`;
+      activeCartContainer.style.paddingTop = `${originalCartPaddingTop}px`;
       entryHost.style.position = "relative";
       entryHost.style.top = "auto";
       entryHost.style.right = "auto";
+      entryHost.style.left = "auto";
+      entryHost.style.bottom = "auto";
       entryHost.style.width = "100%";
       return;
     }
-    cartInner.style.paddingTop = `${originalCartPaddingTop + 52}px`;
+    activeCartContainer.style.paddingTop = `${originalCartPaddingTop + 52}px`;
     entryHost.style.position = "absolute";
     entryHost.style.top = "8px";
     entryHost.style.right = "8px";
+    entryHost.style.left = "auto";
+    entryHost.style.bottom = "auto";
     entryHost.style.width = "auto";
   }
 
@@ -1598,6 +1631,15 @@
     positionDrawer();
   });
   window.addEventListener("resize", onResize);
+  const refreshHostLayout = throttleRaf(() => {
+    applyEntryHostLayout();
+  });
+  document.addEventListener("ShoptetCartUpdated", refreshHostLayout);
+  document.addEventListener("ShoptetDOMPageContentLoaded", refreshHostLayout);
+  if (document.body && typeof MutationObserver !== "undefined") {
+    const remountObserver = new MutationObserver(refreshHostLayout);
+    remountObserver.observe(document.body, { childList: true, subtree: true });
+  }
   setLog("Pripravené. Otvorte panel cez tlačidlo Bulk objednávanie.");
   window.__shoptetBulkCartVersion = VERSION;
 })();
