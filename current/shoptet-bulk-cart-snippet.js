@@ -575,7 +575,7 @@
 #${ROOT_ID}, #${ROOT_ID} * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
 #${ENTRY_HOST_ID} {
   display: flex;
-  width: 100%;
+  width: auto;
   justify-content: flex-start;
   align-items: center;
   margin: 0 0 14px 0;
@@ -786,8 +786,15 @@
   box-shadow: 0 0 0 2px rgba(51, 65, 85, 0.16);
 }
 @media (max-width: 980px) {
-  #${ENTRY_HOST_ID} { justify-content: stretch; margin-bottom: 10px; }
-  #${FAB_ID} { width: 100%; justify-content: center; font-size: 14px; }
+  #${ENTRY_HOST_ID}.bulk-in-cart { justify-content: stretch; margin-bottom: 10px; width: 100%; }
+  #${ENTRY_HOST_ID}.bulk-in-cart #${FAB_ID} { width: 100%; justify-content: center; font-size: 14px; }
+  #${ENTRY_HOST_ID}.bulk-floating #${FAB_ID} {
+    width: auto;
+    max-width: min(72vw, 260px);
+    justify-content: center;
+    font-size: 13px;
+    padding: 0 12px;
+  }
   #${DRAWER_ID} {
     width: calc(100vw - 20px);
     max-width: calc(100vw - 20px);
@@ -987,15 +994,19 @@
   function applyEntryHostLayout() {
     ensureEntryHostMounted();
     if (!activeCartContainer) {
+      entryHost.classList.add("bulk-floating");
+      entryHost.classList.remove("bulk-in-cart");
       entryHost.style.position = "fixed";
       entryHost.style.left = "14px";
       entryHost.style.right = "auto";
-      entryHost.style.bottom = "14px";
+      entryHost.style.bottom = "max(12px, env(safe-area-inset-bottom, 0px))";
       entryHost.style.top = "auto";
       entryHost.style.width = "auto";
       entryHost.style.zIndex = "2147483644";
       return;
     }
+    entryHost.classList.add("bulk-in-cart");
+    entryHost.classList.remove("bulk-floating");
 
     const originalCartPaddingTop = cartPaddingTopMap.get(activeCartContainer) || 0;
     const currentPosition = window.getComputedStyle(activeCartContainer).position;
