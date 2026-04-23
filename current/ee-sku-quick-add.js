@@ -131,6 +131,10 @@
       "\n#" +
       ROOT_ID +
       " .ee-chip{border:1px solid #cbd5e1;background:#f8fafc;border-radius:999px;padding:4px 8px;font-size:11px;cursor:pointer}" +
+      "\n#" + BTN_ID + ", #" + ROOT_ID + " .ee-btn, #" + ROOT_ID + " .ee-chip{touch-action:manipulation;-webkit-tap-highlight-color:transparent}" +
+      "\n@supports (-webkit-touch-callout: none){@media (hover:none) and (pointer:coarse){#" +
+      ROOT_ID +
+      " textarea{font-size:16px !important;}}}" +
       "\n@media (min-width:981px){#" +
       ROOT_ID +
       "{bottom:258px}#" +

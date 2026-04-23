@@ -54,6 +54,7 @@
       "\n.ee-fav-pdp-action{display:inline-flex;align-items:center;gap:5px;color:#6b7280;text-decoration:none;font-size:12px;font-weight:600;cursor:pointer}" +
       "\n.ee-fav-pdp-action .ee-heart{font-size:14px;line-height:1}" +
       "\n.ee-fav-pdp-action:hover{color:#111827}" +
+      "\n#"+BTN_ID+", #"+ROOT_ID+" .ee-btn, #"+ROOT_ID+" .ee-close, .ee-fav-toggle, .ee-fav-pdp-action{touch-action:manipulation;-webkit-tap-highlight-color:transparent}" +
       "\n#" + ROOT_ID + ".ee-behind{z-index:1300 !important}" +
       "\n#" + ROOT_ID + ".ee-behind #" + BTN_ID + "{opacity:.86}" +
       "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host{z-index:1299 !important}" +

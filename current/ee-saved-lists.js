@@ -128,6 +128,14 @@
       "\n#" +
       ROOT_ID +
       " .ee-hint{font-size:12px;color:#64748b;line-height:1.35}" +
+      "\n#" + BTN_ID + ", #" + ROOT_ID + " .ee-btn, #" + ROOT_ID + " .ee-close{touch-action:manipulation;-webkit-tap-highlight-color:transparent}" +
+      "\n@supports (-webkit-touch-callout: none){@media (hover:none) and (pointer:coarse){#" +
+      ROOT_ID +
+      " input,#" +
+      ROOT_ID +
+      " textarea,#" +
+      ROOT_ID +
+      " select{font-size:16px !important;}}}" +
       "\n@media (min-width:981px){#" +
       ROOT_ID +
       "{bottom:212px}#" +
