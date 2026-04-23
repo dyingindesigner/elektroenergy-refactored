@@ -54,9 +54,10 @@
       "\n.ee-fav-pdp-action{display:inline-flex;align-items:center;gap:5px;color:#6b7280;text-decoration:none;font-size:12px;font-weight:600;cursor:pointer}" +
       "\n.ee-fav-pdp-action .ee-heart{font-size:14px;line-height:1}" +
       "\n.ee-fav-pdp-action:hover{color:#111827}" +
-      "\n#" + ROOT_ID + ".ee-disabled #" + BTN_ID + "{opacity:.55;pointer-events:none}" +
-      "\nhtml[data-ee-floating-open] #shoptet-bulk-cart-fab{pointer-events:none !important;opacity:.55 !important}" +
-      "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host, html[data-ee-floating-open] #shoptet-bulk-entry-host *{pointer-events:none !important}" +
+      "\n#" + ROOT_ID + ".ee-behind{z-index:2147483000 !important}" +
+      "\n#" + ROOT_ID + ".ee-behind #" + BTN_ID + "{opacity:.86}" +
+      "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host{z-index:2147482999 !important}" +
+      "\nhtml[data-ee-floating-open] #shoptet-bulk-cart-fab{z-index:2147482999 !important}" +
       "\n@media (min-width: 981px){#" + DRAWER_ID + "{left:auto;right:14px;bottom:168px;top:auto;width:min(420px,calc(100vw - 24px));max-height:min(70vh,620px);border-radius:14px;transform:translateY(12px) scale(.98);opacity:0;pointer-events:none}#" + ROOT_ID + ".open #" + DRAWER_ID + "{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}}" +
       "\n@media (max-width:980px){#" + ROOT_ID + "{bottom:116px}#" + BTN_ID + "{height:36px;padding:0 10px;font-size:12px}}";
     var style = document.createElement("style");
@@ -325,11 +326,11 @@
     return root;
   }
 
-  function syncFloatingInteractivity() {
+  function syncFloatingLayer() {
     var root = document.getElementById(ROOT_ID);
     if (!root) return;
     var current = document.documentElement.getAttribute("data-ee-floating-open");
-    root.classList.toggle("ee-disabled", !!current && current !== FLOAT_SOURCE);
+    root.classList.toggle("ee-behind", !!current && current !== FLOAT_SOURCE);
   }
 
   function setFloatingOwner(open) {
@@ -379,7 +380,7 @@
         if (!ctx.loggedIn) return;
         state.items = loadLocal();
         ensureRoot();
-        syncFloatingInteractivity();
+        syncFloatingLayer();
         setFabCount();
         mountInlineToggles();
         renderDrawerBody();
@@ -401,7 +402,7 @@
   }
 
   boot();
-  document.addEventListener("ee-floating-changed", syncFloatingInteractivity);
+  document.addEventListener("ee-floating-changed", syncFloatingLayer);
   document.addEventListener("ShoptetDOMPageContentLoaded", scheduleMount);
   document.addEventListener("ShoptetCartUpdated", scheduleMount);
   if (core && typeof core.routeChanged === "function") core.routeChanged(scheduleMount);

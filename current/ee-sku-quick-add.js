@@ -83,9 +83,10 @@
       "\n#" +
       ROOT_ID +
       "{position:fixed;left:14px;bottom:214px;z-index:2147483641}" +
-      "\n#" + ROOT_ID + ".ee-disabled #" + BTN_ID + "{opacity:.55;pointer-events:none}" +
-      "\nhtml[data-ee-floating-open] #shoptet-bulk-cart-fab{pointer-events:none !important;opacity:.55 !important}" +
-      "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host, html[data-ee-floating-open] #shoptet-bulk-entry-host *{pointer-events:none !important}" +
+      "\n#" + ROOT_ID + ".ee-behind{z-index:2147483000 !important}" +
+      "\n#" + ROOT_ID + ".ee-behind #" + BTN_ID + "{opacity:.86}" +
+      "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host{z-index:2147482999 !important}" +
+      "\nhtml[data-ee-floating-open] #shoptet-bulk-cart-fab{z-index:2147482999 !important}" +
       "\n#" +
       BTN_ID +
       "{height:38px;padding:0 12px;border-radius:999px;border:1px solid #cbd5e1;background:#1d4ed8;color:#fff;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:7px;cursor:pointer;box-shadow:0 8px 18px rgba(29,78,216,.26)}" +
@@ -209,11 +210,11 @@
     setFloatingOwner(state.open);
   }
 
-  function syncFloatingInteractivity() {
+  function syncFloatingLayer() {
     var root = document.getElementById(ROOT_ID);
     if (!root) return;
     var current = document.documentElement.getAttribute("data-ee-floating-open");
-    root.classList.toggle("ee-disabled", !!current && current !== FLOAT_SOURCE);
+    root.classList.toggle("ee-behind", !!current && current !== FLOAT_SOURCE);
   }
 
   function setFloatingOwner(open) {
@@ -294,7 +295,7 @@
         state.context = ctx;
         if (!ctx.loggedIn) return;
         ensureRoot();
-        syncFloatingInteractivity();
+        syncFloatingLayer();
         refreshPlacement();
       })
       .catch(function () {});
@@ -305,5 +306,5 @@
     if (core && typeof core.scheduleOnce === "function") core.scheduleOnce("ee-skuqa-resize", refreshPlacement, 120);
     else setTimeout(refreshPlacement, 120);
   });
-  document.addEventListener("ee-floating-changed", syncFloatingInteractivity);
+  document.addEventListener("ee-floating-changed", syncFloatingLayer);
 })();
