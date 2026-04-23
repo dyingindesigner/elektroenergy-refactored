@@ -11,6 +11,7 @@
   var ROOT_ID = "ee-lists-root";
   var BTN_ID = "ee-lists-fab";
   var PANEL_ID = "ee-lists-panel";
+  var CART_CTA_ID = "ee-lists-cart-cta";
   var STYLE_ID = "ee-lists-style";
   var LS_KEY_PREFIX = "ee_saved_lists_v1";
   var FLOAT_SOURCE = "lists";
@@ -136,6 +137,15 @@
       " textarea,#" +
       ROOT_ID +
       " select{font-size:16px !important;}}}" +
+      "\n#" + CART_CTA_ID + "{border:1px solid #e2e8f0;border-radius:12px;padding:12px;background:#ffffff;display:grid;gap:8px;margin:8px 0 12px}" +
+      "\n#" + CART_CTA_ID + " .ee-cart-title{font-size:14px;font-weight:700;color:#0f172a}" +
+      "\n#" + CART_CTA_ID + " .ee-cart-help{font-size:12px;color:#64748b;line-height:1.35}" +
+      "\n#" + CART_CTA_ID + " .ee-cart-row{display:flex;gap:8px;flex-wrap:wrap}" +
+      "\n#" + CART_CTA_ID + " input{flex:1;min-width:180px;border:1px solid #cbd5e1;border-radius:8px;padding:8px 10px;font-size:14px}" +
+      "\n#" + CART_CTA_ID + " .ee-cart-btn{border:1px solid #0f766e;background:#0f766e;color:#fff;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}" +
+      "\n#" + CART_CTA_ID + " .ee-cart-btn[disabled]{opacity:.65;cursor:not-allowed}" +
+      "\n#" + CART_CTA_ID + " .ee-cart-log{font-size:12px;min-height:16px;color:#334155}" +
+      "\n@media (max-width:980px){#" + CART_CTA_ID + "{padding:10px}#" + CART_CTA_ID + " input{min-width:100%}#" + CART_CTA_ID + " .ee-cart-btn{width:100%}}" +
       "\n@media (min-width:981px){#" +
       ROOT_ID +
       "{bottom:212px}#" +
@@ -230,6 +240,38 @@
       }
     });
     return Array.from(byId.values());
+  }
+
+  function isCartPage() {
+    return /\/kosik\/?$/i.test(location.pathname || "") || /\/cart\/?$/i.test(location.pathname || "");
+  }
+
+  function suggestCartListName() {
+    var d = new Date();
+    var iso = d.toISOString().slice(0, 10);
+    return "Košík " + iso;
+  }
+
+  function upsertListRecord(listId, listName, items) {
+    if (!listName || !Array.isArray(items) || !items.length) return false;
+    var safeId = n(listId || uid());
+    var existingIdx = state.lists.findIndex(function (x) {
+      return x.list_id === safeId;
+    });
+    var row = {
+      list_id: safeId,
+      list_name: listName,
+      items: items,
+      updated_at: new Date().toISOString(),
+    };
+    if (existingIdx >= 0) state.lists[existingIdx] = row;
+    else state.lists.unshift(row);
+    saveLocal();
+    renderListRows();
+    if (sync && state.context && state.context.canSync) {
+      sync.upsertSavedList(state.context.ownerHash, row, items).catch(function () {});
+    }
+    return true;
   }
 
   function ensureRoot() {
@@ -376,23 +418,8 @@
     var items = parseSkuInput(itemsInput.value);
     if (!listName || !items.length) return;
     var listId = n(nameInput.dataset.editingListId) || uid();
-    var existingIdx = state.lists.findIndex(function (x) {
-      return x.list_id === listId;
-    });
-    var row = {
-      list_id: listId,
-      list_name: listName,
-      items: items,
-      updated_at: new Date().toISOString(),
-    };
-    if (existingIdx >= 0) state.lists[existingIdx] = row;
-    else state.lists.unshift(row);
-    saveLocal();
-    renderListRows();
+    upsertListRecord(listId, listName, items);
     nameInput.dataset.editingListId = "";
-    if (sync && state.context && state.context.canSync) {
-      sync.upsertSavedList(state.context.ownerHash, row, items).catch(function () {});
-    }
   }
 
   function useList(listId) {
@@ -453,15 +480,78 @@
         state.lists = loadLocal();
         ensureRoot();
         syncFloatingLayer();
+        ensureCartCtaMounted();
         renderListRows();
         syncFromRemote();
       })
       .catch(function () {});
   }
 
+  function resolveCartCtaHost() {
+    var selectors = [
+      "#cart-wrapper .cart-summary .extras-wrapper .js-extras-col-summary",
+      "#cart-wrapper .cart-table + .cart-summary",
+      "#cart-wrapper .cart-inner",
+      "main#content .content-inner #cart-wrapper",
+    ];
+    for (var i = 0; i < selectors.length; i++) {
+      var el = document.querySelector(selectors[i]);
+      if (el) return el;
+    }
+    return null;
+  }
+
+  function ensureCartCtaMounted() {
+    if (!state.context || !state.context.loggedIn || !isCartPage()) return;
+    var host = resolveCartCtaHost();
+    if (!host) return;
+    var root = document.getElementById(CART_CTA_ID);
+    if (!root) {
+      root = document.createElement("div");
+      root.id = CART_CTA_ID;
+      root.innerHTML =
+        '<div class="ee-cart-title">Uložiť aktuálny košík do zoznamu</div>' +
+        '<div class="ee-cart-help">Vytvorí uložený zoznam zo všetkých položiek v košíku. Môžete ho neskôr načítať jedným klikom.</div>' +
+        '<div class="ee-cart-row"><input type="text" data-role="cart-list-name" placeholder="Názov zoznamu"><button type="button" class="ee-cart-btn" data-act="save-cart-list">Uložiť košík do zoznamu</button></div>' +
+        '<div class="ee-cart-log" data-role="cart-log">Pripravené.</div>';
+      var continueBtn = host.querySelector(".next-step.next-step--cart");
+      if (continueBtn && continueBtn.parentNode === host) host.insertBefore(root, continueBtn);
+      else host.prepend(root);
+      var nameInput = root.querySelector('[data-role="cart-list-name"]');
+      nameInput.value = suggestCartListName();
+      root.querySelector('[data-act="save-cart-list"]').addEventListener("click", function () {
+        var btn = this;
+        var log = root.querySelector('[data-role="cart-log"]');
+        var listName = n(nameInput.value || "");
+        var items = getCartItems();
+        if (!listName) {
+          log.textContent = "Zadajte názov zoznamu.";
+          return;
+        }
+        if (!items.length) {
+          log.textContent = "Košík je prázdny, nie je čo uložiť.";
+          return;
+        }
+        btn.disabled = true;
+        var ok = upsertListRecord("", listName, items);
+        btn.disabled = false;
+        if (!ok) {
+          log.textContent = "Zoznam sa nepodarilo uložiť.";
+          return;
+        }
+        log.textContent = "Uložené: " + items.length + " položiek do zoznamu \"" + listName + "\".";
+      });
+    } else if (root.parentNode !== host) {
+      host.prepend(root);
+    }
+  }
+
   boot();
   document.addEventListener("ee-floating-changed", syncFloatingLayer);
   document.addEventListener("click", function () {
     setTimeout(syncFloatingLayer, 0);
+    setTimeout(ensureCartCtaMounted, 0);
   });
+  document.addEventListener("ShoptetCartUpdated", ensureCartCtaMounted);
+  document.addEventListener("ShoptetDOMPageContentLoaded", ensureCartCtaMounted);
 })();
