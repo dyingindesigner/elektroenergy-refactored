@@ -51,7 +51,12 @@
       "\n.ee-fav-toggle{border:none;background:transparent;padding:0;cursor:pointer;color:#475569;font-size:18px;line-height:1}" +
       "\n.ee-fav-toggle.is-on{color:#dc2626}" +
       "\n.ee-fav-inline{display:inline-flex;align-items:center;gap:6px}" +
-      "\n#" + ROOT_ID + ".ee-hidden{display:none}" +
+      "\n.ee-fav-pdp-action{display:inline-flex;align-items:center;gap:5px;color:#6b7280;text-decoration:none;font-size:12px;font-weight:600;cursor:pointer}" +
+      "\n.ee-fav-pdp-action .ee-heart{font-size:14px;line-height:1}" +
+      "\n.ee-fav-pdp-action:hover{color:#111827}" +
+      "\n#" + ROOT_ID + ".ee-disabled #" + BTN_ID + "{opacity:.55;pointer-events:none}" +
+      "\nhtml[data-ee-floating-open] #shoptet-bulk-cart-fab{pointer-events:none !important;opacity:.55 !important}" +
+      "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host, html[data-ee-floating-open] #shoptet-bulk-entry-host *{pointer-events:none !important}" +
       "\n@media (min-width: 981px){#" + DRAWER_ID + "{left:auto;right:14px;bottom:168px;top:auto;width:min(420px,calc(100vw - 24px));max-height:min(70vh,620px);border-radius:14px;transform:translateY(12px) scale(.98);opacity:0;pointer-events:none}#" + ROOT_ID + ".open #" + DRAWER_ID + "{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}}" +
       "\n@media (max-width:980px){#" + ROOT_ID + "{bottom:116px}#" + BTN_ID + "{height:36px;padding:0 10px;font-size:12px}}";
     var style = document.createElement("style");
@@ -150,34 +155,51 @@
     if (sourceBtn) sourceBtn.blur();
   }
 
-  function ensureToggleForNode(node) {
-    if (!node || node.querySelector(".ee-fav-toggle")) return;
-    var meta = extractMetaFromNode(node);
-    if (!meta) return;
-    var mount = node.querySelector(".p-in, .product-top, .product, .p, h1, .detail-parameters") || node;
-    var wrap = document.createElement("span");
-    wrap.className = "ee-fav-inline";
-    wrap.innerHTML = '<button type="button" class="ee-fav-toggle" aria-label="Obľúbené" title="Obľúbené">❤</button>';
-    var btn = wrap.querySelector("button");
-    btn.dataset.eeCode = meta.product_code;
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      toggleFavorite(meta, btn);
-    });
-    if (/^H1$/i.test(mount.tagName || "")) {
-      mount.insertAdjacentElement("afterend", wrap);
-    } else {
-      mount.appendChild(wrap);
+  function ascii(v) {
+    return n(v || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+  }
+
+  function findPdpActionInsertTarget() {
+    var actions = document.querySelectorAll("a,button");
+    var askNode = null;
+    var watchNode = null;
+    var shareNode = null;
+    for (var i = 0; i < actions.length; i++) {
+      var txt = ascii(actions[i].textContent || "");
+      if (!askNode && (txt.indexOf("opytat sa") !== -1 || txt.indexOf("opýtať sa") !== -1)) askNode = actions[i];
+      if (!watchNode && (txt.indexOf("strazit") !== -1 || txt.indexOf("strazit") !== -1)) watchNode = actions[i];
+      if (!shareNode && (txt.indexOf("zdielat") !== -1 || txt.indexOf("zdieľat") !== -1)) shareNode = actions[i];
     }
+    if (askNode) return { before: askNode, after: shareNode };
+    if (watchNode) return { before: watchNode, after: shareNode };
+    return null;
+  }
+
+  function ensurePdpToggle() {
+    if (document.querySelector(".ee-fav-pdp-action")) return;
+    if (!document.querySelector("h1")) return;
+    var targetCfg = findPdpActionInsertTarget();
+    if (!targetCfg || !targetCfg.before) return;
+    var meta = extractMetaFromNode(document) || null;
+    if (!meta || !meta.product_code) return;
+    var anchor = document.createElement("a");
+    anchor.href = "#";
+    anchor.className = "ee-fav-pdp-action ee-fav-toggle";
+    anchor.dataset.eeCode = meta.product_code;
+    anchor.innerHTML = '<span class="ee-heart">♡</span><span>Obľúbené</span>';
+    anchor.addEventListener("click", function (e) {
+      e.preventDefault();
+      toggleFavorite(meta, anchor);
+    });
+    targetCfg.before.parentNode.insertBefore(anchor, targetCfg.before);
   }
 
   function mountInlineToggles() {
     if (!state.context || !state.context.loggedIn) return;
-    var candidates = document.querySelectorAll(
-      ".product, .product-box, .p, .product-item, .p-in, .detail, #content"
-    );
-    for (var i = 0; i < candidates.length; i++) ensureToggleForNode(candidates[i]);
+    ensurePdpToggle();
     refreshToggleStates();
   }
 
@@ -188,7 +210,12 @@
       var on = isFav(code);
       toggles[i].classList.toggle("is-on", on);
       toggles[i].setAttribute("aria-pressed", on ? "true" : "false");
-      toggles[i].textContent = on ? "❤" : "♡";
+      if (toggles[i].classList.contains("ee-fav-pdp-action")) {
+        var heart = toggles[i].querySelector(".ee-heart");
+        if (heart) heart.textContent = on ? "❤" : "♡";
+      } else {
+        toggles[i].textContent = on ? "❤" : "♡";
+      }
     }
   }
 
@@ -298,11 +325,11 @@
     return root;
   }
 
-  function syncFloatingVisibility() {
+  function syncFloatingInteractivity() {
     var root = document.getElementById(ROOT_ID);
     if (!root) return;
     var current = document.documentElement.getAttribute("data-ee-floating-open");
-    root.classList.toggle("ee-hidden", !!current && current !== FLOAT_SOURCE);
+    root.classList.toggle("ee-disabled", !!current && current !== FLOAT_SOURCE);
   }
 
   function setFloatingOwner(open) {
@@ -352,7 +379,7 @@
         if (!ctx.loggedIn) return;
         state.items = loadLocal();
         ensureRoot();
-        syncFloatingVisibility();
+        syncFloatingInteractivity();
         setFabCount();
         mountInlineToggles();
         renderDrawerBody();
@@ -374,7 +401,7 @@
   }
 
   boot();
-  document.addEventListener("ee-floating-changed", syncFloatingVisibility);
+  document.addEventListener("ee-floating-changed", syncFloatingInteractivity);
   document.addEventListener("ShoptetDOMPageContentLoaded", scheduleMount);
   document.addEventListener("ShoptetCartUpdated", scheduleMount);
   if (core && typeof core.routeChanged === "function") core.routeChanged(scheduleMount);
