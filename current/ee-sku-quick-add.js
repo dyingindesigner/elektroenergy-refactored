@@ -83,10 +83,10 @@
       "\n#" +
       ROOT_ID +
       "{position:fixed;left:14px;bottom:214px;z-index:2147483641}" +
-      "\n#" + ROOT_ID + ".ee-behind{z-index:2147483000 !important}" +
+      "\n#" + ROOT_ID + ".ee-behind{z-index:1300 !important}" +
       "\n#" + ROOT_ID + ".ee-behind #" + BTN_ID + "{opacity:.86}" +
-      "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host{z-index:2147482999 !important}" +
-      "\nhtml[data-ee-floating-open] #shoptet-bulk-cart-fab{z-index:2147482999 !important}" +
+      "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host{z-index:1299 !important}" +
+      "\nhtml[data-ee-floating-open] #shoptet-bulk-cart-fab{z-index:1299 !important}" +
       "\n#" +
       BTN_ID +
       "{height:38px;padding:0 12px;border-radius:999px;border:1px solid #cbd5e1;background:#1d4ed8;color:#fff;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:7px;cursor:pointer;box-shadow:0 8px 18px rgba(29,78,216,.26)}" +
@@ -214,7 +214,8 @@
     var root = document.getElementById(ROOT_ID);
     if (!root) return;
     var current = document.documentElement.getAttribute("data-ee-floating-open");
-    root.classList.toggle("ee-behind", !!current && current !== FLOAT_SOURCE);
+    var bulkOpen = !!document.querySelector("#shoptet-bulk-cart-root.open");
+    root.classList.toggle("ee-behind", bulkOpen || (!!current && current !== FLOAT_SOURCE));
   }
 
   function setFloatingOwner(open) {
@@ -307,4 +308,7 @@
     else setTimeout(refreshPlacement, 120);
   });
   document.addEventListener("ee-floating-changed", syncFloatingLayer);
+  document.addEventListener("click", function () {
+    setTimeout(syncFloatingLayer, 0);
+  });
 })();
