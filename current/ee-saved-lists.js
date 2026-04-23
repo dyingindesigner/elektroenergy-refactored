@@ -9,6 +9,7 @@
   window.__EE_SAVED_LISTS_BOOTED__ = true;
 
   var ROOT_ID = "ee-lists-root";
+  var STACK_ID = "ee-feature-launchers";
   var BTN_ID = "ee-lists-fab";
   var PANEL_ID = "ee-lists-panel";
   var CART_CTA_ID = "ee-lists-cart-cta";
@@ -58,7 +59,8 @@
       "\n#" +
       ROOT_ID +
       "{position:fixed;left:14px;bottom:168px;z-index:2147483641}" +
-      "\n#" + ROOT_ID + ".ee-behind{z-index:1300 !important}" +
+      "\n#" + STACK_ID + "{position:fixed;left:14px;bottom:max(12px, env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;align-items:flex-start;gap:8px;z-index:1300}" +
+      "\n#" + STACK_ID + " > #" + ROOT_ID + "{position:static !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;z-index:auto !important}" +
       "\n#" + ROOT_ID + ".ee-behind #" + BTN_ID + "{opacity:.86}" +
       "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host{z-index:1299 !important}" +
       "\nhtml[data-ee-floating-open] #shoptet-bulk-cart-fab{z-index:1299 !important}" +
@@ -155,11 +157,7 @@
       ".open #" +
       PANEL_ID +
       "{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}}" +
-      "\n@media (max-width:980px){#" +
-      ROOT_ID +
-      "{bottom:160px}#" +
-      BTN_ID +
-      "{height:36px;font-size:12px;padding:0 10px}}";
+      "\n@media (max-width:980px){#" + BTN_ID + "{height:36px;font-size:12px;padding:0 10px}}";
     var style = document.createElement("style");
     style.id = STYLE_ID;
     style.textContent = css;
@@ -296,7 +294,7 @@
       '<div class="ee-card"><div class="ee-label">Moje zoznamy</div><div data-role="list-rows"></div></div>' +
       "</div>" +
       "</div>";
-    document.body.appendChild(root);
+    ensureLauncherStack().appendChild(root);
 
     var toggle = root.querySelector("#" + BTN_ID);
     function closePanel() {
@@ -340,6 +338,15 @@
       }
     });
     return root;
+  }
+
+  function ensureLauncherStack() {
+    var host = document.getElementById(STACK_ID);
+    if (host) return host;
+    host = document.createElement("div");
+    host.id = STACK_ID;
+    document.body.appendChild(host);
+    return host;
   }
 
   function syncFloatingLayer() {

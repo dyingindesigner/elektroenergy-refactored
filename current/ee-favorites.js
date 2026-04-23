@@ -6,6 +6,7 @@
   "use strict";
 
   var ROOT_ID = "ee-favorites-root";
+  var STACK_ID = "ee-feature-launchers";
   var BTN_ID = "ee-favorites-fab";
   var DRAWER_ID = "ee-favorites-drawer";
   var STYLE_ID = "ee-favorites-style";
@@ -31,6 +32,8 @@
     if (document.getElementById(STYLE_ID)) return;
     var css =
       "\n#" + ROOT_ID + "{position:fixed;left:14px;bottom:124px;z-index:2147483642;display:flex;flex-direction:column;align-items:flex-start;gap:8px}" +
+      "\n#" + STACK_ID + "{position:fixed;left:14px;bottom:max(12px, env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;align-items:flex-start;gap:8px;z-index:1300}" +
+      "\n#" + STACK_ID + " > #" + ROOT_ID + "{position:static !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;z-index:auto !important}" +
       "\n#" + BTN_ID + "{height:38px;min-width:44px;padding:0 12px;border-radius:999px;border:1px solid #cbd5e1;background:#111827;color:#fff;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px rgba(2,6,23,.22)}" +
       "\n#"+BTN_ID+" .ee-count{background:#ef4444;color:#fff;border-radius:999px;padding:1px 7px;font-size:11px;min-width:18px;text-align:center}" +
       "\n#"+DRAWER_ID+"{position:fixed;left:0;right:0;bottom:0;top:auto;max-height:min(78svh,640px);background:#fff;border-top-left-radius:14px;border-top-right-radius:14px;transform:translateY(106%);transition:transform .2s ease;z-index:2147483645;display:flex;flex-direction:column;border:1px solid #e2e8f0}" +
@@ -55,12 +58,11 @@
       "\n.ee-fav-pdp-action .ee-heart{font-size:14px;line-height:1}" +
       "\n.ee-fav-pdp-action:hover{color:#111827}" +
       "\n#"+BTN_ID+", #"+ROOT_ID+" .ee-btn, #"+ROOT_ID+" .ee-close, .ee-fav-toggle, .ee-fav-pdp-action{touch-action:manipulation;-webkit-tap-highlight-color:transparent}" +
-      "\n#" + ROOT_ID + ".ee-behind{z-index:1300 !important}" +
       "\n#" + ROOT_ID + ".ee-behind #" + BTN_ID + "{opacity:.86}" +
       "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host{z-index:1299 !important}" +
       "\nhtml[data-ee-floating-open] #shoptet-bulk-cart-fab{z-index:1299 !important}" +
       "\n@media (min-width: 981px){#" + DRAWER_ID + "{left:auto;right:14px;bottom:168px;top:auto;width:min(420px,calc(100vw - 24px));max-height:min(70vh,620px);border-radius:14px;transform:translateY(12px) scale(.98);opacity:0;pointer-events:none}#" + ROOT_ID + ".open #" + DRAWER_ID + "{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}}" +
-      "\n@media (max-width:980px){#" + ROOT_ID + "{bottom:116px}#" + BTN_ID + "{height:36px;padding:0 10px;font-size:12px}}";
+      "\n@media (max-width:980px){#" + BTN_ID + "{height:36px;padding:0 10px;font-size:12px}}";
     var style = document.createElement("style");
     style.id = STYLE_ID;
     style.textContent = css;
@@ -134,6 +136,37 @@
     };
   }
 
+  function getPdpMeta() {
+    var codeInput = document.querySelector('input[name="productCode"], input[name="product_code"]');
+    var code = n(codeInput && codeInput.value);
+    if (!code) {
+      var heading = document.querySelector("h1");
+      var scope = document.querySelector(".p-detail-inner, .product-top, #content") || document.body;
+      var scan = n((scope && scope.textContent) || "");
+      var m = scan.match(/(?:K[ÓO]D\s*PRODUKTU|K[ÓO]D)\s*[:\-]?\s*([A-Z0-9._\-]{2,})/i);
+      if (m) code = n(m[1]);
+      if (!code && heading) {
+        var hm = n(heading.textContent || "").match(/\b([A-Z0-9._\-]{2,})\b$/);
+        if (hm) code = n(hm[1]);
+      }
+    }
+    if (!code) return null;
+    var title = n((document.querySelector("h1") && document.querySelector("h1").textContent) || ("Produkt " + code));
+    var img =
+      n(
+        (document.querySelector(".p-image img, .product-top img, .p-main-image img, .p-photo img") || {})
+          .currentSrc ||
+          (document.querySelector(".p-image img, .product-top img, .p-main-image img, .p-photo img") || {}).src
+      ) || "";
+    return {
+      product_code: code,
+      product_name: title,
+      product_url: location.href,
+      product_image: img,
+      updated_at: new Date().toISOString(),
+    };
+  }
+
   function toggleFavorite(meta, sourceBtn) {
     if (!meta || !meta.product_code) return;
     var idx = state.items.findIndex(function (it) {
@@ -165,18 +198,25 @@
   }
 
   function findPdpActionInsertTarget() {
-    var actions = document.querySelectorAll("a,button");
-    var askNode = null;
-    var watchNode = null;
-    var shareNode = null;
-    for (var i = 0; i < actions.length; i++) {
-      var txt = ascii(actions[i].textContent || "");
-      if (!askNode && (txt.indexOf("opytat sa") !== -1 || txt.indexOf("opýtať sa") !== -1)) askNode = actions[i];
-      if (!watchNode && (txt.indexOf("strazit") !== -1 || txt.indexOf("strazit") !== -1)) watchNode = actions[i];
-      if (!shareNode && (txt.indexOf("zdielat") !== -1 || txt.indexOf("zdieľat") !== -1)) shareNode = actions[i];
+    var actionsWrap = document.querySelector(".social-buttons-wrapper .link-icons");
+    if (!actionsWrap) return null;
+    var askNode = actionsWrap.querySelector("a.link-icon.chat, button.link-icon.chat");
+    var watchNode = actionsWrap.querySelector("a.link-icon.watchdog, button.link-icon.watchdog");
+    var shareNode = actionsWrap.querySelector("a.link-icon.share, button.link-icon.share");
+    if (!askNode || !watchNode || !shareNode) {
+      var actions = actionsWrap.querySelectorAll("a,button");
+      for (var i = 0; i < actions.length; i++) {
+        var txt = ascii(actions[i].textContent || "");
+        if (!askNode && txt.indexOf("opytat sa") !== -1) askNode = actions[i];
+        if (!watchNode && txt.indexOf("strazit") !== -1) watchNode = actions[i];
+        if (!shareNode && txt.indexOf("zdielat") !== -1) shareNode = actions[i];
+      }
     }
-    if (askNode) return { before: askNode, after: shareNode };
-    if (watchNode) return { before: watchNode, after: shareNode };
+    if (askNode && shareNode) return { before: askNode, wrap: actionsWrap };
+    if (watchNode && shareNode) return { before: watchNode, wrap: actionsWrap };
+    if (askNode) return { before: askNode, wrap: actionsWrap };
+    if (watchNode) return { before: watchNode, wrap: actionsWrap };
+    if (shareNode) return { before: shareNode, wrap: actionsWrap };
     return null;
   }
 
@@ -185,7 +225,7 @@
     if (!document.querySelector("h1")) return;
     var targetCfg = findPdpActionInsertTarget();
     if (!targetCfg || !targetCfg.before) return;
-    var meta = extractMetaFromNode(document) || null;
+    var meta = getPdpMeta() || extractMetaFromNode(document) || null;
     if (!meta || !meta.product_code) return;
     var anchor = document.createElement("a");
     anchor.href = "#";
@@ -199,8 +239,37 @@
     targetCfg.before.parentNode.insertBefore(anchor, targetCfg.before);
   }
 
+  function isInTopFeatured(node) {
+    return !!(node && node.closest && node.closest(".products-top, .products-top-wrapper"));
+  }
+
+  function ensureListingToggle(node) {
+    if (!node || isInTopFeatured(node)) return;
+    if (node.querySelector(".ee-fav-card-toggle")) return;
+    var meta = extractMetaFromNode(node);
+    if (!meta || !meta.product_code) return;
+    var wrap = document.createElement("span");
+    wrap.className = "ee-fav-inline ee-fav-card-toggle";
+    wrap.innerHTML = '<button type="button" class="ee-fav-toggle" aria-label="Obľúbené" title="Obľúbené">♡</button>';
+    var btn = wrap.querySelector("button");
+    btn.dataset.eeCode = meta.product_code;
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleFavorite(meta, btn);
+    });
+    if (getComputedStyle(node).position === "static") node.style.position = "relative";
+    wrap.style.position = "absolute";
+    wrap.style.left = "8px";
+    wrap.style.bottom = "8px";
+    wrap.style.zIndex = "2";
+    node.appendChild(wrap);
+  }
+
   function mountInlineToggles() {
     if (!state.context || !state.context.loggedIn) return;
+    var listing = document.querySelectorAll("main #products > .product, #products > .product");
+    for (var i = 0; i < listing.length; i++) ensureListingToggle(listing[i]);
     ensurePdpToggle();
     refreshToggleStates();
   }
@@ -284,7 +353,7 @@
       '<div class="ee-head"><div class="ee-title">Obľúbené produkty</div><button type="button" class="ee-close">Zavrieť</button></div>' +
       '<div class="ee-body"></div>' +
       "</div>";
-    document.body.appendChild(root);
+    ensureLauncherStack().appendChild(root);
 
     var fab = root.querySelector("#" + BTN_ID);
     fab.addEventListener("click", function () {
@@ -325,6 +394,15 @@
       }
     });
     return root;
+  }
+
+  function ensureLauncherStack() {
+    var host = document.getElementById(STACK_ID);
+    if (host) return host;
+    host = document.createElement("div");
+    host.id = STACK_ID;
+    document.body.appendChild(host);
+    return host;
   }
 
   function syncFloatingLayer() {
