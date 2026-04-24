@@ -79,6 +79,11 @@
       STACK_ID +
       " ." +
       BTN_CLASS +
+      ".ee-press{animation:ee-launcher-press .28s cubic-bezier(.2,.7,.2,1)}" +
+      "\n#" +
+      STACK_ID +
+      " ." +
+      BTN_CLASS +
       "[disabled]{opacity:.55;cursor:default}" +
       "\n#" +
       STACK_ID +
@@ -123,6 +128,7 @@
       " ." +
       BTN_CLASS +
       "{height:32px;min-width:0;padding:0 20px 0 8px;border-radius:10px;gap:4px;font-size:10.5px}}" +
+      "\n@keyframes ee-launcher-press{0%{transform:scale(1)}35%{transform:scale(.95)}100%{transform:scale(1)}}"+
       "\n#" +
       STACK_ID +
       " > #ee-favorites-root:not(.open) #ee-favorites-drawer, #" +
@@ -227,6 +233,9 @@
       btnEl.disabled = !!cfg.disabled;
       btnEl.onclick = function (handler) {
         return function () {
+          btnEl.classList.remove("ee-press");
+          void btnEl.offsetWidth;
+          btnEl.classList.add("ee-press");
           try {
             if (typeof handler === "function") handler();
           } catch (_e) {}

@@ -638,7 +638,8 @@
   position: fixed;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) scale(.985);
+  transform: translate(-50%, -50%) scale(.92);
+  transform-origin: var(--ee-origin-x, 50%) var(--ee-origin-y, 100%);
   width: min(var(--bulk-modal-max), calc(100vw - (var(--bulk-page-gutter) * 2)));
   max-width: min(var(--bulk-modal-max), calc(100vw - (var(--bulk-page-gutter) * 2)));
   max-height: min(92svh, 92dvh, 92vh);
@@ -663,7 +664,7 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity .24s cubic-bezier(.2,.7,.2,1), transform .24s cubic-bezier(.2,.7,.2,1), visibility .24s cubic-bezier(.2,.7,.2,1);
+  transition: opacity .34s cubic-bezier(.2,.85,.25,1), transform .34s cubic-bezier(.2,.85,.25,1), visibility .34s cubic-bezier(.2,.85,.25,1);
 }
 #${ROOT_ID}.open #${DRAWER_ID} {
   opacity: 1;
@@ -1553,6 +1554,14 @@
   let previousBodyOverflow = "";
 
   function openDrawer() {
+    const br = fab.getBoundingClientRect();
+    const dr = drawer.getBoundingClientRect();
+    if (dr.width > 0 && dr.height > 0) {
+      const ox = ((br.left + br.width / 2 - dr.left) / dr.width) * 100;
+      const oy = ((br.top + br.height / 2 - dr.top) / dr.height) * 100;
+      drawer.style.setProperty("--ee-origin-x", `${Math.max(0, Math.min(100, ox))}%`);
+      drawer.style.setProperty("--ee-origin-y", `${Math.max(0, Math.min(100, oy))}%`);
+    }
     previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     fab.style.visibility = "hidden";

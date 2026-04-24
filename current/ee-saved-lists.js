@@ -27,6 +27,17 @@
   function setOpen(open) {
     var root = document.getElementById(ROOT_ID) || ensureRoot();
     var toggle = root.querySelector("#" + BTN_ID);
+    var panel = root.querySelector("#" + PANEL_ID);
+    if (open && panel && toggle) {
+      var br = toggle.getBoundingClientRect();
+      var pr = panel.getBoundingClientRect();
+      if (pr.width > 0 && pr.height > 0) {
+        var ox = ((br.left + br.width / 2 - pr.left) / pr.width) * 100;
+        var oy = ((br.top + br.height / 2 - pr.top) / pr.height) * 100;
+        panel.style.setProperty("--ee-origin-x", Math.max(0, Math.min(100, ox)) + "%");
+        panel.style.setProperty("--ee-origin-y", Math.max(0, Math.min(100, oy)) + "%");
+      }
+    }
     state.open = !!open;
     root.classList.toggle("open", state.open);
     if (toggle) toggle.setAttribute("aria-expanded", state.open ? "true" : "false");
@@ -84,12 +95,12 @@
       ".open .ee-overlay{opacity:1;pointer-events:auto}" +
       "\n#" +
       PANEL_ID +
-      "{position:fixed;left:0;right:0;bottom:0;max-height:min(80svh,680px);background:#fff;border-top-left-radius:14px;border-top-right-radius:14px;transform:translateY(104%);transition:transform .24s cubic-bezier(.2,.7,.2,1),opacity .24s cubic-bezier(.2,.7,.2,1);border:1px solid #e2e8f0;z-index:2147483645;display:flex;flex-direction:column}" +
+      "{position:fixed;left:0;right:0;bottom:0;max-height:min(80svh,680px);background:#fff;border-top-left-radius:14px;border-top-right-radius:14px;transform:translateY(18px) scale(.92);transform-origin:var(--ee-origin-x,50%) var(--ee-origin-y,100%);opacity:0;transition:transform .34s cubic-bezier(.2,.85,.25,1),opacity .3s cubic-bezier(.2,.7,.2,1);border:1px solid #e2e8f0;z-index:2147483645;display:flex;flex-direction:column}" +
       "\n#" +
       ROOT_ID +
       ".open #" +
       PANEL_ID +
-      "{transform:translateY(0)}" +
+      "{transform:translateY(0) scale(1);opacity:1}" +
       "\n#" +
       ROOT_ID +
       " .ee-head{display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid #e2e8f0}" +
@@ -161,7 +172,7 @@
       ROOT_ID +
       "{bottom:212px}#" +
       PANEL_ID +
-      "{left:50%;right:auto;bottom:74px;width:min(520px,calc(100vw - 24px));max-height:68vh;border-radius:14px;transform:translateX(-50%) translateY(12px) scale(.98);opacity:0;pointer-events:none}#" +
+      "{left:50%;right:auto;bottom:74px;width:min(520px,calc(100vw - 24px));max-height:68vh;border-radius:14px;transform:translateX(-50%) translateY(16px) scale(.92);opacity:0;pointer-events:none}#" +
       ROOT_ID +
       ".open #" +
       PANEL_ID +
