@@ -74,31 +74,31 @@
     {
         "name":  "ee-launcher-stack.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-launcher-stack.js",
-        "sha256":  "714b21f4ae4530e9d589954f6b4354166599316854289dc0d982609884fc9f47",
-        "downloaded_at":  "2026-04-25T22:30:00"
+        "sha256":  "cbe2fbee17c82b6beb7b47d48f81ad343ba8a7101a46265f5427c7bd7845f7f0",
+        "downloaded_at":  "2026-04-25T23:00:00"
     },
     {
         "name":  "ee-favorites.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-favorites.js",
-        "sha256":  "2eae7235c882676161dbb661caf5b2c5abd2431bade7c1a3611aac8dbe2dfd49",
-        "downloaded_at":  "2026-04-25T22:10:00"
+        "sha256":  "f5c4206671945c6f013ae16a58a64a9173dbf5af194264626857c157da9a241b",
+        "downloaded_at":  "2026-04-25T23:00:00"
     },
     {
         "name":  "ee-saved-lists.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-saved-lists.js",
-        "sha256":  "ed602bf49aeb4fb75828412d8125a5b75082294658645bf2b07e219a7bff4e3d",
-        "downloaded_at":  "2026-04-25T22:10:00"
+        "sha256":  "145f9d8d347329c0ad3b363b99de3d6ac7131fb2d6f28bbfc921076338bb6a8e",
+        "downloaded_at":  "2026-04-25T23:00:00"
     },
     {
         "name":  "ee-sku-quick-add.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-sku-quick-add.js",
-        "sha256":  "48271783081e43dd828e8e98335d112052f9dfedf887b51031ac60ba8cc62bd3",
-        "downloaded_at":  "2026-04-25T22:10:00"
+        "sha256":  "ee81c98ecaa8dd0257bcb518524e2360b4e65caa17525d875e69cf2149736dbc",
+        "downloaded_at":  "2026-04-25T23:00:00"
     },
     {
         "name":  "shoptet-bulk-cart-snippet.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/shoptet-bulk-cart-snippet.js",
-        "sha256":  "5d8de7ae9221c130de0e5d410e775f49c88950f5ebf36c15d796cf18df13c67a",
-        "downloaded_at":  "2026-04-25T22:10:00"
+        "sha256":  "3d9360fb8c72d0964cd332592c34c1449a20ee3004050e95b7ce7b031225cfba",
+        "downloaded_at":  "2026-04-25T23:00:00"
     }
 ]

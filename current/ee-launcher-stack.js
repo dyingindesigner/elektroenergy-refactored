@@ -69,7 +69,12 @@
       STACK_ID +
       " ." +
       BTN_CLASS +
-      "{box-sizing:border-box;width:100%;height:34px;min-width:0;padding:0 20px 0 10px;border-radius:10px;border:none;box-shadow:none;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:6px;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:12px;font-weight:700;line-height:1.1;letter-spacing:0;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}" +
+      "{box-sizing:border-box;width:100%;height:34px;min-width:0;padding:0 20px 0 10px;border-radius:10px;border:none;box-shadow:none;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:6px;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:12px;font-weight:700;line-height:1.1;letter-spacing:0;white-space:nowrap;text-overflow:ellipsis;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}" +
+      "\n#" +
+      STACK_ID +
+      " ." +
+      BTN_CLASS +
+      ":hover{transform:translateY(-1px);filter:brightness(1.02)}" +
       "\n#" +
       STACK_ID +
       " ." +
@@ -271,6 +276,107 @@
     host.__eeLauncherResizeObs = ro;
   }
 
+  function makePanelDraggable(opts) {
+    if (!opts || !opts.panelEl || !opts.storageKey) return null;
+    var panel = opts.panelEl;
+    var handle = opts.handleEl || panel;
+    var desktopMinWidth = Number(opts.desktopMinWidth || 981);
+    var key = String(opts.storageKey);
+    var drag = null;
+
+    function isDesktop() {
+      return window.innerWidth >= desktopMinWidth;
+    }
+
+    function loadPos() {
+      try {
+        var parsed = JSON.parse(localStorage.getItem(key) || "null");
+        if (!parsed || !isFinite(parsed.x) || !isFinite(parsed.y)) return null;
+        return { x: Number(parsed.x), y: Number(parsed.y) };
+      } catch (_e) {
+        return null;
+      }
+    }
+
+    function savePos(pos) {
+      try {
+        localStorage.setItem(key, JSON.stringify({ x: Math.round(pos.x), y: Math.round(pos.y) }));
+      } catch (_e) {}
+    }
+
+    function clampPos(pos) {
+      var w = Math.max(160, Math.round(panel.offsetWidth || 320));
+      var h = Math.max(120, Math.round(panel.offsetHeight || 240));
+      var maxX = Math.max(8, window.innerWidth - w - 8);
+      var maxY = Math.max(8, window.innerHeight - h - 8);
+      return {
+        x: Math.min(maxX, Math.max(8, Number(pos.x) || 8)),
+        y: Math.min(maxY, Math.max(8, Number(pos.y) || 8)),
+      };
+    }
+
+    function applyPos(pos) {
+      var c = clampPos(pos);
+      panel.classList.add("ee-user-positioned");
+      panel.style.left = c.x + "px";
+      panel.style.top = c.y + "px";
+      panel.style.right = "auto";
+      panel.style.bottom = "auto";
+      panel.style.transform = "none";
+      return c;
+    }
+
+    function applySaved() {
+      if (!isDesktop()) return;
+      var p = loadPos();
+      if (!p) return;
+      applyPos(p);
+    }
+
+    function onPointerMove(e) {
+      if (!drag) return;
+      var x = drag.startX + (e.clientX - drag.originX);
+      var y = drag.startY + (e.clientY - drag.originY);
+      applyPos({ x: x, y: y });
+    }
+
+    function onPointerUp() {
+      if (!drag) return;
+      savePos({ x: parseFloat(panel.style.left || "0"), y: parseFloat(panel.style.top || "0") });
+      drag = null;
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+    }
+
+    handle.addEventListener("pointerdown", function (e) {
+      if (!isDesktop()) return;
+      if (e.button !== 0) return;
+      drag = {
+        originX: e.clientX,
+        originY: e.clientY,
+        startX: parseFloat(panel.style.left || panel.getBoundingClientRect().left || 8),
+        startY: parseFloat(panel.style.top || panel.getBoundingClientRect().top || 8),
+      };
+      window.addEventListener("pointermove", onPointerMove);
+      window.addEventListener("pointerup", onPointerUp);
+    });
+
+    window.addEventListener("resize", function () {
+      if (!isDesktop()) return;
+      var p = loadPos();
+      if (p) applyPos(p);
+    });
+
+    return {
+      applySaved: applySaved,
+      clearSaved: function () {
+        try {
+          localStorage.removeItem(key);
+        } catch (_e) {}
+      },
+    };
+  }
+
   ensureHost();
   ensureStyle();
   requestUpdate();
@@ -278,7 +384,7 @@
   tickTimer = setInterval(requestUpdate, 450);
 
   window.EE_LAUNCHER_STACK = {
-    version: "2026-04-25-launcher-v9",
+    version: "2026-04-25-launcher-v10",
     STACK_ID: STACK_ID,
     ensureHost: ensureHost,
     ensureStyle: ensureStyle,
@@ -286,6 +392,7 @@
     scheduleReorder: scheduleReorder,
     registerButton: registerButton,
     unregisterButton: unregisterButton,
+    makePanelDraggable: makePanelDraggable,
     requestUpdate: requestUpdate,
     _tick: tickTimer,
   };

@@ -19,6 +19,7 @@
 
   var core = window.EE_CORE || null;
   var sync = window.EE_FEATURES_SYNC || null;
+  var dragPanelApi = null;
   var state = {
     context: null,
     open: false,
@@ -96,7 +97,7 @@
       ".open .ee-overlay{opacity:1;pointer-events:auto}" +
       "\n#" +
       PANEL_ID +
-      "{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top-left-radius:14px;border-top-right-radius:14px;border:1px solid #e2e8f0;transform:translateY(105%);transition:transform .2s ease;z-index:2147483645;padding:12px;display:grid;gap:8px}" +
+      "{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top-left-radius:14px;border-top-right-radius:14px;border:1px solid #e2e8f0;transform:translateY(105%);transition:transform .24s cubic-bezier(.2,.7,.2,1),opacity .24s cubic-bezier(.2,.7,.2,1);z-index:2147483645;padding:12px;display:grid;gap:8px}" +
       "\n#" +
       ROOT_ID +
       ".open #" +
@@ -144,6 +145,8 @@
       ".open #" +
       PANEL_ID +
       "{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}}" +
+      "\n@media (min-width:981px){#" + PANEL_ID + ".ee-user-positioned{transform:none !important;opacity:1 !important;pointer-events:auto}}" +
+      "\n@media (min-width:981px){#" + ROOT_ID + " .ee-title{cursor:grab}#" + ROOT_ID + " .ee-title:active{cursor:grabbing}}" +
       "\n@media (max-width:980px){#" + BTN_ID + "{height:36px;padding:0 10px;font-size:12px}}";
     var style = document.createElement("style");
     style.id = STYLE_ID;
@@ -178,6 +181,13 @@
     ensureLauncherStack().appendChild(root);
     bindUI(root);
     renderHistory(root);
+    if (!dragPanelApi && window.EE_LAUNCHER_STACK && typeof window.EE_LAUNCHER_STACK.makePanelDraggable === "function") {
+      dragPanelApi = window.EE_LAUNCHER_STACK.makePanelDraggable({
+        panelEl: root.querySelector("#" + PANEL_ID),
+        handleEl: root.querySelector(".ee-title"),
+        storageKey: "ee_skuqa_panel_pos_v1",
+      });
+    }
     return root;
   }
 
@@ -221,6 +231,7 @@
     root.classList.toggle("open", state.open);
     root.querySelector("#" + BTN_ID).setAttribute("aria-expanded", state.open ? "true" : "false");
     setFloatingOwner(state.open);
+    if (state.open && dragPanelApi && typeof dragPanelApi.applySaved === "function") dragPanelApi.applySaved();
     if (window.EE_LAUNCHER_STACK && typeof window.EE_LAUNCHER_STACK.requestUpdate === "function") {
       window.EE_LAUNCHER_STACK.requestUpdate();
     }
