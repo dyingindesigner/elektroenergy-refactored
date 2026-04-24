@@ -982,6 +982,11 @@
   entryHost.id = ENTRY_HOST_ID;
   document.body.appendChild(entryHost);
   entryHost.appendChild(fab);
+  // Defensive dedupe: if another script/version left duplicate bulk FAB nodes,
+  // keep the current one and remove stale clones so click behavior stays stable.
+  for (const ghostFab of Array.from(document.querySelectorAll(`#${FAB_ID}`))) {
+    if (ghostFab !== fab) ghostFab.remove();
+  }
   const cartPaddingTopMap = new WeakMap();
   let activeCartContainer = null;
 
@@ -1568,6 +1573,20 @@
     if (root.classList.contains("open")) closeDrawer();
     else openDrawer();
   });
+  // Fallback: if a foreign duplicate bulk button still appears (theme cache/legacy include),
+  // route its click to the current drawer instance.
+  document.addEventListener(
+    "click",
+    (e) => {
+      const anyBulkFab = e.target && e.target.closest ? e.target.closest(`#${FAB_ID}`) : null;
+      if (!anyBulkFab || anyBulkFab === fab) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (root.classList.contains("open")) closeDrawer();
+      else openDrawer();
+    },
+    true
+  );
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && root.classList.contains("open")) {
