@@ -607,9 +607,9 @@
   width: 100%;
   max-width: none;
   border-radius: 10px;
-  height: 34px;
+  height: 32px;
   justify-content: center;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   box-shadow: none;
 }

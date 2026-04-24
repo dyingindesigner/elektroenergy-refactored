@@ -71,7 +71,7 @@
       " #shoptet-bulk-cart-fab{box-sizing:border-box;width:100%;justify-content:center}" +
       "\n@media (max-width:980px){#" +
       STACK_ID +
-      "{left:8px;right:8px;bottom:calc(62px + env(safe-area-inset-bottom, 0px));width:auto;max-width:none;flex-direction:row;align-items:stretch;gap:6px;padding:6px;border-radius:14px;background:rgba(255,255,255,.96);border:1px solid rgba(203,213,225,.95);box-shadow:0 10px 24px rgba(15,23,42,.16);backdrop-filter:blur(6px)}#" +
+      "{left:8px;right:8px;bottom:calc(10px + env(safe-area-inset-bottom, 0px));width:auto;max-width:none;flex-direction:row;align-items:stretch;gap:6px;padding:6px;border-radius:14px;background:rgba(255,255,255,.97);border:1px solid rgba(203,213,225,.95);box-shadow:0 10px 24px rgba(15,23,42,.16);backdrop-filter:blur(6px)}#" +
       STACK_ID +
       " > #ee-favorites-root, #" +
       STACK_ID +
@@ -87,7 +87,36 @@
       STACK_ID +
       " #ee-skuqa-btn, #" +
       STACK_ID +
-      " #shoptet-bulk-cart-fab{height:34px;min-width:0;padding:0 8px;font-size:11px;font-weight:700;border-radius:10px;box-shadow:none}}";
+      " #shoptet-bulk-cart-fab{height:32px;min-width:0;padding:0 8px;font-size:10.5px;font-weight:700;border-radius:10px;box-shadow:none}" +
+      "\n#" +
+      STACK_ID +
+      " > #ee-favorites-root:not(.open) #ee-favorites-drawer, #" +
+      STACK_ID +
+      " > #ee-favorites-root:not(.open) .ee-overlay, #" +
+      STACK_ID +
+      " > #ee-lists-root:not(.open) #ee-lists-panel, #" +
+      STACK_ID +
+      " > #ee-lists-root:not(.open) .ee-overlay, #" +
+      STACK_ID +
+      " > #ee-skuqa-root:not(.open) #ee-skuqa-panel, #" +
+      STACK_ID +
+      " > #ee-skuqa-root:not(.open) .ee-overlay{display:none !important}" +
+      "\n#" +
+      STACK_ID +
+      " > #ee-favorites-root.open #ee-favorites-drawer{display:flex !important}" +
+      "\n#" +
+      STACK_ID +
+      " > #ee-lists-root.open #ee-lists-panel{display:flex !important}" +
+      "\n#" +
+      STACK_ID +
+      " > #ee-skuqa-root.open #ee-skuqa-panel{display:grid !important}" +
+      "\n#" +
+      STACK_ID +
+      " > #ee-favorites-root.open .ee-overlay, #" +
+      STACK_ID +
+      " > #ee-lists-root.open .ee-overlay, #" +
+      STACK_ID +
+      " > #ee-skuqa-root.open .ee-overlay{display:block !important}}";
     var s = document.createElement("style");
     s.id = STYLE_ID;
     s.textContent = css;
@@ -130,7 +159,7 @@
   setupStackResizeObserver();
 
   window.EE_LAUNCHER_STACK = {
-    version: "2026-04-25-launcher-v3",
+    version: "2026-04-25-launcher-v4",
     STACK_ID: STACK_ID,
     ensureHost: ensureHost,
     ensureStyle: ensureStyle,
