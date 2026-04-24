@@ -74,8 +74,8 @@
     {
         "name":  "ee-launcher-stack.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-launcher-stack.js",
-        "sha256":  "bab1875781475b0bfe595749dbe09dc9ac36093c120f9136b5f7144e077f00a8",
-        "downloaded_at":  "2026-04-25T18:00:00"
+        "sha256":  "2762dc408a9da44c3ac347d893e417dfee46f613c3346733aafe0c6a9060a144",
+        "downloaded_at":  "2026-04-25T18:45:00"
     },
     {
         "name":  "ee-favorites.js",
@@ -98,7 +98,7 @@
     {
         "name":  "shoptet-bulk-cart-snippet.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/shoptet-bulk-cart-snippet.js",
-        "sha256":  "c136dadddb1573cd84b8f76bcd26fd12867f8aebcd64af3ba38fd1435c865213",
-        "downloaded_at":  "2026-04-25T18:00:00"
+        "sha256":  "b126383006ebe705837e5818f5a636d4e16614192c6310f9e68c9846bbd6dc30",
+        "downloaded_at":  "2026-04-25T18:45:00"
     }
 ]

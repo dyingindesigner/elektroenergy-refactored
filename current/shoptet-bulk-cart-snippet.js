@@ -22,7 +22,7 @@
   const DRAWER_ID = "shoptet-bulk-cart-drawer";
   const STORAGE_KEY = "shoptet-bulk-cart-v2";
   const STYLE_ID = "shoptet-bulk-cart-style";
-  const VERSION = "2026-04-25-bulk-clearance-fab-align";
+  const VERSION = "2026-04-25-mobile-dock-menu";
   const RENDER_MODE = String(window.EE_BULK_RENDER_MODE || "all-except-home").toLowerCase();
 
   function shouldRenderBulk() {
@@ -587,6 +587,13 @@
   margin: 0;
   box-sizing: border-box;
 }
+#${ENTRY_HOST_ID}.bulk-in-stack {
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
 #${ENTRY_HOST_ID}.bulk-floating #${FAB_ID} {
   width: 100%;
   max-width: none;
@@ -595,6 +602,16 @@
   justify-content: center;
   font-size: 13px;
   font-weight: 600;
+}
+#${ENTRY_HOST_ID}.bulk-in-stack #${FAB_ID} {
+  width: 100%;
+  max-width: none;
+  border-radius: 10px;
+  height: 34px;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: none;
 }
 #${FAB_ID} {
   position: relative;
@@ -1028,9 +1045,31 @@
 
   function applyEntryHostLayout() {
     ensureEntryHostMounted();
+    const launcherStackHost = document.getElementById("ee-feature-launchers");
+    if (
+      !activeCartContainer &&
+      window.innerWidth <= 980 &&
+      launcherStackHost &&
+      launcherStackHost.isConnected
+    ) {
+      if (entryHost.parentElement !== launcherStackHost) {
+        if (entryHost.parentElement) entryHost.parentElement.removeChild(entryHost);
+        launcherStackHost.appendChild(entryHost);
+      }
+      entryHost.classList.add("bulk-in-stack");
+      entryHost.classList.remove("bulk-floating", "bulk-in-cart");
+      entryHost.style.position = "";
+      entryHost.style.left = "";
+      entryHost.style.right = "";
+      entryHost.style.top = "";
+      entryHost.style.bottom = "";
+      entryHost.style.width = "";
+      entryHost.style.zIndex = "";
+      return;
+    }
     if (!activeCartContainer) {
       entryHost.classList.add("bulk-floating");
-      entryHost.classList.remove("bulk-in-cart");
+      entryHost.classList.remove("bulk-in-stack", "bulk-in-cart");
       entryHost.style.position = "fixed";
       entryHost.style.left = "14px";
       entryHost.style.right = "auto";
@@ -1043,7 +1082,7 @@
       return;
     }
     entryHost.classList.add("bulk-in-cart");
-    entryHost.classList.remove("bulk-floating");
+    entryHost.classList.remove("bulk-floating", "bulk-in-stack");
     entryHost.style.bottom = "";
 
     const originalCartPaddingTop = cartPaddingTopMap.get(activeCartContainer) || 0;
