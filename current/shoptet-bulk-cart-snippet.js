@@ -906,7 +906,7 @@
   const fab = document.createElement("button");
   fab.id = FAB_ID;
   fab.type = "button";
-  fab.innerHTML = '🛒 <span>Bulk objednávanie</span><span class="bulk-badge" style="display:none">0</span>';
+  fab.innerHTML = '<span class="ee-dock-icon" aria-hidden="true">🛒</span><span class="ee-dock-label">Bulk objednávanie</span><span class="bulk-badge" style="display:none">0</span>';
 
   const drawer = document.createElement("section");
   drawer.id = DRAWER_ID;

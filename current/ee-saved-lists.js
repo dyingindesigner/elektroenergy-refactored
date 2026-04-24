@@ -276,7 +276,7 @@
     root.innerHTML =
       '<button id="' +
       BTN_ID +
-      '" type="button">📋 Zoznamy</button>' +
+      '" type="button"><span class="ee-dock-icon" aria-hidden="true">📋</span><span class="ee-dock-label">Zoznamy</span></button>' +
       '<div class="ee-overlay"></div>' +
       '<div id="' +
       PANEL_ID +

@@ -87,7 +87,18 @@
       STACK_ID +
       " #ee-skuqa-btn, #" +
       STACK_ID +
-      " #shoptet-bulk-cart-fab{height:32px;min-width:0;padding:0 8px;font-size:10.5px;font-weight:700;border-radius:10px;box-shadow:none}" +
+      " #shoptet-bulk-cart-fab{height:32px;min-width:0;padding:0 20px 0 8px;font-size:10.5px;font-weight:700;border-radius:10px;box-shadow:none;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:4px;line-height:1;white-space:nowrap;text-overflow:ellipsis}" +
+      "\n#" +
+      STACK_ID +
+      " .ee-dock-icon{display:inline-flex;align-items:center;justify-content:center;line-height:1;font-size:12px;flex:0 0 auto;transform:translateY(-.5px)}" +
+      "\n#" +
+      STACK_ID +
+      " .ee-dock-label{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis}" +
+      "\n#" +
+      STACK_ID +
+      " #ee-favorites-fab .ee-count, #" +
+      STACK_ID +
+      " #shoptet-bulk-cart-fab .bulk-badge{position:absolute;top:2px;right:3px;display:inline-flex;align-items:center;justify-content:center;min-width:14px;height:14px;padding:0 3px;font-size:9px;line-height:1;border-radius:999px;z-index:1;margin-left:0;vertical-align:baseline}" +
       "\n#" +
       STACK_ID +
       " > #ee-favorites-root:not(.open) #ee-favorites-drawer, #" +
@@ -159,7 +170,7 @@
   setupStackResizeObserver();
 
   window.EE_LAUNCHER_STACK = {
-    version: "2026-04-25-launcher-v4",
+    version: "2026-04-25-launcher-v5",
     STACK_ID: STACK_ID,
     ensureHost: ensureHost,
     ensureStyle: ensureStyle,

@@ -159,7 +159,7 @@
     root.innerHTML =
       '<button id="' +
       BTN_ID +
-      '" type="button" aria-expanded="false">⌨ SKU+</button>' +
+      '" type="button" aria-expanded="false"><span class="ee-dock-icon" aria-hidden="true">⌨</span><span class="ee-dock-label">SKU+</span></button>' +
       '<div class="ee-overlay"></div>' +
       '<div id="' +
       PANEL_ID +

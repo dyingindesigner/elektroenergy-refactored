@@ -447,7 +447,7 @@
     root.innerHTML =
       '<button id="' +
       BTN_ID +
-      '" type="button" aria-expanded="false">❤ Obľúbené <span class="ee-count">0</span></button>' +
+      '" type="button" aria-expanded="false"><span class="ee-dock-icon" aria-hidden="true">❤</span><span class="ee-dock-label">Obľúbené</span><span class="ee-count">0</span></button>' +
       '<div class="ee-overlay"></div>' +
       '<div id="' +
       DRAWER_ID +
