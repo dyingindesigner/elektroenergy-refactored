@@ -65,7 +65,7 @@
       STACK_ID +
       " #ee-skuqa-btn, #" +
       STACK_ID +
-      " #shoptet-bulk-cart-fab{box-sizing:border-box;width:100%;height:34px;min-width:0;padding:0 20px 0 10px;font-size:12px;font-weight:700;border-radius:10px;box-shadow:none;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:6px;line-height:1;white-space:nowrap;text-overflow:ellipsis}" +
+      " #shoptet-bulk-cart-fab{box-sizing:border-box;width:100%;height:34px;min-width:0;padding:0 20px 0 10px;border-radius:10px;box-shadow:none;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:6px;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:12px;font-weight:700;line-height:1.1;letter-spacing:0;white-space:nowrap;text-overflow:ellipsis}" +
       "\n@media (max-width:980px){#" +
       STACK_ID +
       "{left:8px;right:8px;transform:none;bottom:calc(10px + env(safe-area-inset-bottom, 0px));width:auto;max-width:none;flex-direction:row;align-items:stretch;gap:6px;padding:6px;border-radius:14px;background:rgba(255,255,255,.97);border:1px solid rgba(203,213,225,.95);box-shadow:0 10px 24px rgba(15,23,42,.16);backdrop-filter:blur(6px)}#" +
@@ -84,7 +84,7 @@
       STACK_ID +
       " #ee-skuqa-btn, #" +
       STACK_ID +
-      " #shoptet-bulk-cart-fab{height:32px;min-width:0;padding:0 20px 0 8px;font-size:10.5px;font-weight:700;border-radius:10px;gap:4px}" +
+      " #shoptet-bulk-cart-fab{height:32px;min-width:0;padding:0 20px 0 8px;border-radius:10px;gap:4px;font-size:10.5px;font-weight:700;line-height:1.1;letter-spacing:0}" +
       "\n#" +
       STACK_ID +
       " .ee-dock-icon{display:inline-flex;align-items:center;justify-content:center;line-height:1;font-size:12px;flex:0 0 auto;transform:translateY(-.5px)}" +
@@ -167,7 +167,7 @@
   setupStackResizeObserver();
 
   window.EE_LAUNCHER_STACK = {
-    version: "2026-04-25-launcher-v6",
+    version: "2026-04-25-launcher-v7",
     STACK_ID: STACK_ID,
     ensureHost: ensureHost,
     ensureStyle: ensureStyle,
