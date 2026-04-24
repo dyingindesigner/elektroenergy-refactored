@@ -41,13 +41,10 @@
 
   function ensureStyle() {
     if (document.getElementById(STYLE_ID)) return;
-    var b = BULK_CLEAR_PX;
     var css =
       "\n#" +
       STACK_ID +
-      "{position:fixed;left:14px;bottom:calc(" +
-      b +
-      "px + max(12px, env(safe-area-inset-bottom, 0px)));display:flex;flex-direction:column;align-items:stretch;gap:10px;z-index:1320;width:min(calc(100vw - 28px), 320px);box-sizing:border-box;pointer-events:none}" +
+      "{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom, 0px));display:flex;flex-direction:row;align-items:stretch;gap:6px;z-index:1320;width:min(calc(100vw - 28px), 860px);padding:6px;border-radius:14px;background:rgba(255,255,255,.97);border:1px solid rgba(203,213,225,.95);box-shadow:0 10px 24px rgba(15,23,42,.16);backdrop-filter:blur(6px);box-sizing:border-box;pointer-events:none}" +
       "\n#" +
       STACK_ID +
       " > *{pointer-events:auto}" +
@@ -59,7 +56,7 @@
       STACK_ID +
       " > #ee-skuqa-root, #" +
       STACK_ID +
-      " > #shoptet-bulk-entry-host{position:static !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;z-index:auto !important;width:100% !important;margin:0 !important;display:flex !important;flex-direction:column !important;align-items:stretch !important;gap:8px;box-sizing:border-box}" +
+      " > #shoptet-bulk-entry-host{position:static !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;z-index:auto !important;width:100% !important;margin:0 !important;display:flex !important;flex-direction:column !important;align-items:stretch !important;gap:8px;box-sizing:border-box;flex:1 1 0;min-width:0}" +
       "\n#" +
       STACK_ID +
       " #ee-favorites-fab, #" +
@@ -68,10 +65,10 @@
       STACK_ID +
       " #ee-skuqa-btn, #" +
       STACK_ID +
-      " #shoptet-bulk-cart-fab{box-sizing:border-box;width:100%;justify-content:center}" +
+      " #shoptet-bulk-cart-fab{box-sizing:border-box;width:100%;height:34px;min-width:0;padding:0 20px 0 10px;font-size:12px;font-weight:700;border-radius:10px;box-shadow:none;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:6px;line-height:1;white-space:nowrap;text-overflow:ellipsis}" +
       "\n@media (max-width:980px){#" +
       STACK_ID +
-      "{left:8px;right:8px;bottom:calc(10px + env(safe-area-inset-bottom, 0px));width:auto;max-width:none;flex-direction:row;align-items:stretch;gap:6px;padding:6px;border-radius:14px;background:rgba(255,255,255,.97);border:1px solid rgba(203,213,225,.95);box-shadow:0 10px 24px rgba(15,23,42,.16);backdrop-filter:blur(6px)}#" +
+      "{left:8px;right:8px;transform:none;bottom:calc(10px + env(safe-area-inset-bottom, 0px));width:auto;max-width:none;flex-direction:row;align-items:stretch;gap:6px;padding:6px;border-radius:14px;background:rgba(255,255,255,.97);border:1px solid rgba(203,213,225,.95);box-shadow:0 10px 24px rgba(15,23,42,.16);backdrop-filter:blur(6px)}#" +
       STACK_ID +
       " > #ee-favorites-root, #" +
       STACK_ID +
@@ -87,7 +84,7 @@
       STACK_ID +
       " #ee-skuqa-btn, #" +
       STACK_ID +
-      " #shoptet-bulk-cart-fab{height:32px;min-width:0;padding:0 20px 0 8px;font-size:10.5px;font-weight:700;border-radius:10px;box-shadow:none;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:4px;line-height:1;white-space:nowrap;text-overflow:ellipsis}" +
+      " #shoptet-bulk-cart-fab{height:32px;min-width:0;padding:0 20px 0 8px;font-size:10.5px;font-weight:700;border-radius:10px;gap:4px}" +
       "\n#" +
       STACK_ID +
       " .ee-dock-icon{display:inline-flex;align-items:center;justify-content:center;line-height:1;font-size:12px;flex:0 0 auto;transform:translateY(-.5px)}" +
@@ -170,7 +167,7 @@
   setupStackResizeObserver();
 
   window.EE_LAUNCHER_STACK = {
-    version: "2026-04-25-launcher-v5",
+    version: "2026-04-25-launcher-v6",
     STACK_ID: STACK_ID,
     ensureHost: ensureHost,
     ensureStyle: ensureStyle,

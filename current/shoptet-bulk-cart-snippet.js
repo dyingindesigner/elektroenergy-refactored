@@ -1048,7 +1048,6 @@
     const launcherStackHost = document.getElementById("ee-feature-launchers");
     if (
       !activeCartContainer &&
-      window.innerWidth <= 980 &&
       launcherStackHost &&
       launcherStackHost.isConnected
     ) {
