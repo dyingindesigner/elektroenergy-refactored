@@ -1,6 +1,6 @@
 /**
- * Shared floating launcher column for EE feature scripts (lists, SKU+, favorites).
- * Load BEFORE ee-saved-lists.js, ee-sku-quick-add.js, ee-favorites.js so layout is single-source.
+ * Shared launcher dock renderer.
+ * Load BEFORE ee-saved-lists.js, ee-sku-quick-add.js, ee-favorites.js, shoptet-bulk-cart-snippet.js
  */
 (function () {
   "use strict";
@@ -10,19 +10,13 @@
 
   var STACK_ID = "ee-feature-launchers";
   var STYLE_ID = "ee-launcher-stack-style";
-  var reorderTimer = null;
-  var relayoutTimer = null;
-  var proxySyncTimer = null;
-  var proxyMutationObserver = null;
+  var BTN_CLASS = "ee-launcher-btn";
   var SLOT_CLASS = "ee-launcher-slot";
-  var PROXY_BTN_CLASS = "ee-launcher-proxy-btn";
   var SOURCE_BUTTON_IDS = ["ee-lists-fab", "ee-skuqa-btn", "ee-favorites-fab", "shoptet-bulk-cart-fab"];
-  var SLOT_ORDER = [
-    { slot: "lists", sourceId: "ee-lists-fab" },
-    { slot: "sku", sourceId: "ee-skuqa-btn" },
-    { slot: "fav", sourceId: "ee-favorites-fab" },
-    { slot: "bulk", sourceId: "shoptet-bulk-cart-fab" },
-  ];
+  var registry = new Map();
+  var relayoutTimer = null;
+  var renderTimer = null;
+  var tickTimer = null;
 
   function emitLauncherRelayout() {
     try {
@@ -65,7 +59,7 @@
       STACK_ID +
       " > #ee-skuqa-root, #" +
       STACK_ID +
-      " > #shoptet-bulk-entry-host{position:static !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;z-index:auto !important;width:100% !important;margin:0 !important;display:flex !important;flex-direction:column !important;align-items:stretch !important;gap:8px;box-sizing:border-box;flex:1 1 0;min-width:0}" +
+      " > #shoptet-bulk-entry-host{position:static !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;z-index:auto !important;width:100% !important;margin:0 !important;display:flex !important;flex-direction:column !important;align-items:stretch !important;gap:8px;box-sizing:border-box}" +
       "\n#" +
       STACK_ID +
       " > ." +
@@ -74,32 +68,32 @@
       "\n#" +
       STACK_ID +
       " ." +
-      PROXY_BTN_CLASS +
+      BTN_CLASS +
       "{box-sizing:border-box;width:100%;height:34px;min-width:0;padding:0 20px 0 10px;border-radius:10px;border:none;box-shadow:none;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:6px;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:12px;font-weight:700;line-height:1.1;letter-spacing:0;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}" +
       "\n#" +
       STACK_ID +
       " ." +
-      PROXY_BTN_CLASS +
+      BTN_CLASS +
       "[disabled]{opacity:.55;cursor:default}" +
       "\n#" +
       STACK_ID +
       " ." +
-      PROXY_BTN_CLASS +
+      BTN_CLASS +
       ".ee-theme-lists{background:#0f766e;color:#fff}" +
       "\n#" +
       STACK_ID +
       " ." +
-      PROXY_BTN_CLASS +
+      BTN_CLASS +
       ".ee-theme-sku{background:#1d4ed8;color:#fff}" +
       "\n#" +
       STACK_ID +
       " ." +
-      PROXY_BTN_CLASS +
+      BTN_CLASS +
       ".ee-theme-fav{background:#0f172a;color:#fff}" +
       "\n#" +
       STACK_ID +
       " ." +
-      PROXY_BTN_CLASS +
+      BTN_CLASS +
       ".ee-theme-bulk{background:#111827;color:#fff}" +
       "\n#" +
       STACK_ID +
@@ -115,32 +109,15 @@
       "\n#" +
       STACK_ID +
       " ." +
-      PROXY_BTN_CLASS +
-      " .ee-count, #" +
-      STACK_ID +
-      " ." +
-      PROXY_BTN_CLASS +
-      " .bulk-badge{position:absolute;top:2px;right:3px;display:grid;place-items:center;min-width:16px;height:16px;padding:0 4px;font-size:9px;font-weight:700;line-height:16px;font-family:inherit;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:center;border-radius:999px;z-index:1;margin:0;vertical-align:baseline;box-sizing:border-box}" +
-      "\n#" +
-      STACK_ID +
-      " #ee-favorites-fab, #" +
-      STACK_ID +
-      " #ee-lists-fab, #" +
-      STACK_ID +
-      " #ee-skuqa-btn, #" +
-      STACK_ID +
-      " #shoptet-bulk-cart-fab{box-sizing:border-box;width:100%;height:34px;min-width:0;padding:0 20px 0 10px;border-radius:10px;box-shadow:none;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:6px;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:12px;font-weight:700;line-height:1.1;letter-spacing:0;white-space:nowrap;text-overflow:ellipsis}" +
+      BTN_CLASS +
+      " .ee-dock-badge{position:absolute;top:2px;right:3px;display:grid;place-items:center;min-width:16px;height:16px;padding:0 4px;font-size:9px;font-weight:700;line-height:16px;font-family:inherit;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:center;border-radius:999px;z-index:1;margin:0;box-sizing:border-box;background:#ef4444;color:#fff}" +
       "\n@media (max-width:980px){#" +
       STACK_ID +
-      "{left:8px;right:8px;transform:none;bottom:calc(10px + env(safe-area-inset-bottom, 0px));width:auto;max-width:none;flex-direction:row;align-items:stretch;gap:6px;padding:6px;border-radius:14px;background:rgba(255,255,255,.97);border:1px solid rgba(203,213,225,.95);box-shadow:0 10px 24px rgba(15,23,42,.16);backdrop-filter:blur(6px)}#" +
-      STACK_ID +
-      " > ." +
-      SLOT_CLASS +
-      "{flex:1 1 0;min-width:0}#" +
+      "{left:8px;right:8px;transform:none;bottom:calc(10px + env(safe-area-inset-bottom, 0px));width:auto;max-width:none;gap:6px;padding:6px}#" +
       STACK_ID +
       " ." +
-      PROXY_BTN_CLASS +
-      "{height:32px;min-width:0;padding:0 20px 0 8px;border-radius:10px;gap:4px;font-size:10.5px;font-weight:700;line-height:1.1;letter-spacing:0}" +
+      BTN_CLASS +
+      "{height:32px;min-width:0;padding:0 20px 0 8px;border-radius:10px;gap:4px;font-size:10.5px}}" +
       "\n#" +
       STACK_ID +
       " > #ee-favorites-root:not(.open) #ee-favorites-drawer, #" +
@@ -169,109 +146,123 @@
       STACK_ID +
       " > #ee-lists-root.open .ee-overlay, #" +
       STACK_ID +
-      " > #ee-skuqa-root.open .ee-overlay{display:block !important}}";
+      " > #ee-skuqa-root.open .ee-overlay{display:block !important}";
     var s = document.createElement("style");
     s.id = STYLE_ID;
     s.textContent = css;
     document.head.appendChild(s);
   }
 
-  function reorder() {
-    var host = document.getElementById(STACK_ID);
-    if (!host) return;
-    var ids = ["ee-lists-root", "ee-skuqa-root", "ee-favorites-root", "shoptet-bulk-entry-host"];
-    for (var i = 0; i < ids.length; i++) {
-      var n = document.getElementById(ids[i]);
-      if (n && n.parentNode === host) host.appendChild(n);
+  function toEntries() {
+    var arr = Array.from(registry.values());
+    arr.sort(function (a, b) {
+      return (Number(a.order) || 0) - (Number(b.order) || 0);
+    });
+    return arr;
+  }
+
+  function renderButtonContent(btn, cfg, badgeValue) {
+    var icon = cfg && cfg.icon ? String(cfg.icon) : "";
+    var label = cfg && cfg.label ? String(cfg.label) : "";
+    btn.innerHTML =
+      '<span class="ee-dock-icon" aria-hidden="true">' +
+      icon +
+      "</span>" +
+      '<span class="ee-dock-label">' +
+      label +
+      "</span>" +
+      (badgeValue > 0 ? '<span class="ee-dock-badge">' + badgeValue + "</span>" : "");
+  }
+
+  function readBadge(cfg) {
+    try {
+      if (!cfg || typeof cfg.getBadge !== "function") return 0;
+      var v = Number(cfg.getBadge());
+      if (!isFinite(v) || v <= 0) return 0;
+      return Math.floor(v);
+    } catch (_e) {
+      return 0;
     }
-    ensureProxySlots(host);
-    syncProxyButtons();
   }
 
-  function themeClassForSource(sourceId) {
-    if (sourceId === "ee-lists-fab") return "ee-theme-lists";
-    if (sourceId === "ee-skuqa-btn") return "ee-theme-sku";
-    if (sourceId === "ee-favorites-fab") return "ee-theme-fav";
-    return "ee-theme-bulk";
+  function readOpen(cfg) {
+    try {
+      return !!(cfg && typeof cfg.isOpen === "function" && cfg.isOpen());
+    } catch (_e) {
+      return false;
+    }
   }
 
-  function ensureProxySlots(host) {
-    for (var i = 0; i < SLOT_ORDER.length; i++) {
-      var cfg = SLOT_ORDER[i];
-      var slotId = STACK_ID + "-slot-" + cfg.slot;
+  function render() {
+    var host = ensureHost();
+    var entries = toEntries();
+    var used = {};
+    for (var i = 0; i < entries.length; i++) {
+      var cfg = entries[i];
+      var slotId = STACK_ID + "-slot-" + cfg.id;
+      used[slotId] = true;
       var slot = document.getElementById(slotId);
       if (!slot) {
         slot = document.createElement("div");
         slot.id = slotId;
         slot.className = SLOT_CLASS;
-        slot.dataset.eeLauncherSource = cfg.sourceId;
+        slot.dataset.eeLauncherId = cfg.id;
         var btn = document.createElement("button");
         btn.type = "button";
-        btn.className = PROXY_BTN_CLASS + " " + themeClassForSource(cfg.sourceId);
-        btn.dataset.eeLauncherSource = cfg.sourceId;
-        btn.disabled = true;
+        btn.className = BTN_CLASS;
         slot.appendChild(btn);
-        host.insertBefore(slot, host.firstChild);
+        host.appendChild(slot);
       }
+      var btnEl = slot.querySelector("." + BTN_CLASS);
+      var theme = "ee-theme-" + String(cfg.theme || "");
+      btnEl.className = BTN_CLASS + (cfg.theme ? " " + theme : "");
+      var badge = readBadge(cfg);
+      renderButtonContent(btnEl, cfg, badge);
+      btnEl.setAttribute("aria-expanded", readOpen(cfg) ? "true" : "false");
+      btnEl.disabled = !!cfg.disabled;
+      btnEl.onclick = function (handler) {
+        return function () {
+          try {
+            if (typeof handler === "function") handler();
+          } catch (_e) {}
+          requestUpdate();
+        };
+      }(cfg.onClick);
     }
+    var staleSlots = host.querySelectorAll("." + SLOT_CLASS);
+    for (var si = 0; si < staleSlots.length; si++) {
+      if (!used[staleSlots[si].id]) staleSlots[si].remove();
+    }
+    scheduleRelayoutEmit();
   }
 
-  function syncOneProxy(cfg) {
-    var slot = document.getElementById(STACK_ID + "-slot-" + cfg.slot);
-    if (!slot) return;
-    var proxy = slot.querySelector("." + PROXY_BTN_CLASS);
-    if (!proxy) return;
-    var source = document.getElementById(cfg.sourceId);
-    if (!source) {
-      slot.style.display = "none";
-      proxy.disabled = true;
-      return;
-    }
-    slot.style.display = "";
-    proxy.disabled = false;
-    if (proxy.innerHTML !== source.innerHTML) proxy.innerHTML = source.innerHTML;
-    var expanded = source.getAttribute("aria-expanded");
-    if (expanded != null) proxy.setAttribute("aria-expanded", expanded);
-    proxy.onclick = function () {
-      try {
-        source.click();
-      } catch (_e) {}
-      setTimeout(syncProxyButtons, 60);
-    };
+  function requestUpdate() {
+    if (renderTimer) clearTimeout(renderTimer);
+    renderTimer = setTimeout(function () {
+      renderTimer = null;
+      render();
+    }, 0);
   }
 
-  function syncProxyButtons() {
-    for (var i = 0; i < SLOT_ORDER.length; i++) syncOneProxy(SLOT_ORDER[i]);
+  function registerButton(config) {
+    if (!config || !config.id) return;
+    registry.set(String(config.id), config);
+    requestUpdate();
   }
 
-  function setupProxyObservers() {
-    if (proxySyncTimer) return;
-    proxySyncTimer = setInterval(syncProxyButtons, 450);
-    if (typeof MutationObserver !== "undefined" && !proxyMutationObserver) {
-      proxyMutationObserver = new MutationObserver(function () {
-        syncProxyButtons();
-      });
-      proxyMutationObserver.observe(document.body, {
-        subtree: true,
-        childList: true,
-        attributes: true,
-        attributeFilter: ["aria-expanded", "style", "class"],
-      });
-    }
+  function unregisterButton(id) {
+    if (!id) return;
+    registry.delete(String(id));
+    requestUpdate();
   }
 
   function scheduleReorder() {
-    if (reorderTimer) clearTimeout(reorderTimer);
-    reorderTimer = setTimeout(function () {
-      reorderTimer = null;
-      reorder();
-      scheduleRelayoutEmit();
-    }, 0);
+    requestUpdate();
   }
 
   function setupStackResizeObserver() {
     if (typeof ResizeObserver === "undefined") return;
-    var host = document.getElementById(STACK_ID);
+    var host = ensureHost();
     if (!host || host.__eeLauncherResizeObs) return;
     var ro = new ResizeObserver(function () {
       scheduleRelayoutEmit();
@@ -282,16 +273,20 @@
 
   ensureHost();
   ensureStyle();
-  scheduleReorder();
+  requestUpdate();
   setupStackResizeObserver();
-  setupProxyObservers();
+  tickTimer = setInterval(requestUpdate, 450);
 
   window.EE_LAUNCHER_STACK = {
-    version: "2026-04-25-launcher-v8",
+    version: "2026-04-25-launcher-v9",
     STACK_ID: STACK_ID,
     ensureHost: ensureHost,
     ensureStyle: ensureStyle,
-    reorder: reorder,
+    reorder: scheduleReorder,
     scheduleReorder: scheduleReorder,
+    registerButton: registerButton,
+    unregisterButton: unregisterButton,
+    requestUpdate: requestUpdate,
+    _tick: tickTimer,
   };
 })();

@@ -24,6 +24,19 @@
     lists: [],
   };
 
+  function setOpen(open) {
+    var root = document.getElementById(ROOT_ID) || ensureRoot();
+    var toggle = root.querySelector("#" + BTN_ID);
+    state.open = !!open;
+    root.classList.toggle("open", state.open);
+    if (toggle) toggle.setAttribute("aria-expanded", state.open ? "true" : "false");
+    setFloatingOwner(state.open);
+    if (state.open) renderListRows();
+    if (window.EE_LAUNCHER_STACK && typeof window.EE_LAUNCHER_STACK.requestUpdate === "function") {
+      window.EE_LAUNCHER_STACK.requestUpdate();
+    }
+  }
+
   function n(v) {
     return String(v || "").replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
   }
@@ -294,17 +307,10 @@
 
     var toggle = root.querySelector("#" + BTN_ID);
     function closePanel() {
-      state.open = false;
-      root.classList.remove("open");
-      toggle.setAttribute("aria-expanded", "false");
-      setFloatingOwner(false);
+      setOpen(false);
     }
     toggle.addEventListener("click", function () {
-      state.open = !state.open;
-      root.classList.toggle("open", state.open);
-      toggle.setAttribute("aria-expanded", state.open ? "true" : "false");
-      setFloatingOwner(state.open);
-      if (state.open) renderListRows();
+      setOpen(!state.open);
     });
     root.querySelector(".ee-overlay").addEventListener("click", closePanel);
     root.querySelector(".ee-close").addEventListener("click", closePanel);
@@ -348,6 +354,26 @@
       if (typeof window.EE_LAUNCHER_STACK.scheduleReorder === "function") window.EE_LAUNCHER_STACK.scheduleReorder();
     }
     return host;
+  }
+
+  function registerLauncherButton() {
+    if (!window.EE_LAUNCHER_STACK || typeof window.EE_LAUNCHER_STACK.registerButton !== "function") return;
+    window.EE_LAUNCHER_STACK.registerButton({
+      id: "lists",
+      order: 10,
+      theme: "lists",
+      icon: "📋",
+      label: "Zoznamy",
+      getBadge: function () {
+        return 0;
+      },
+      isOpen: function () {
+        return !!state.open;
+      },
+      onClick: function () {
+        setOpen(!state.open);
+      },
+    });
   }
 
   function syncFloatingLayer() {
@@ -487,6 +513,7 @@
         if (!ctx.loggedIn) return;
         state.lists = loadLocal();
         ensureRoot();
+        registerLauncherButton();
         syncFloatingLayer();
         ensureCartCtaMounted();
         renderListRows();
@@ -553,6 +580,21 @@
       host.prepend(root);
     }
   }
+
+  window.EE_LISTS = {
+    open: function () {
+      setOpen(true);
+    },
+    close: function () {
+      setOpen(false);
+    },
+    toggle: function () {
+      setOpen(!state.open);
+    },
+    isOpen: function () {
+      return !!state.open;
+    },
+  };
 
   boot();
   document.addEventListener("ee-floating-changed", syncFloatingLayer);

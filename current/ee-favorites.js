@@ -105,6 +105,9 @@
     var el = document.querySelector("#" + BTN_ID + " .ee-count");
     if (!el) return;
     el.textContent = String(state.items.length || 0);
+    if (window.EE_LAUNCHER_STACK && typeof window.EE_LAUNCHER_STACK.requestUpdate === "function") {
+      window.EE_LAUNCHER_STACK.requestUpdate();
+    }
   }
 
   function isFav(code) {
@@ -459,23 +462,13 @@
 
     var fab = root.querySelector("#" + BTN_ID);
     fab.addEventListener("click", function () {
-      state.open = !state.open;
-      root.classList.toggle("open", state.open);
-      fab.setAttribute("aria-expanded", state.open ? "true" : "false");
-      setFloatingOwner(state.open);
-      if (state.open) renderDrawerBody();
+      setOpen(!state.open);
     });
     root.querySelector(".ee-overlay").addEventListener("click", function () {
-      state.open = false;
-      root.classList.remove("open");
-      fab.setAttribute("aria-expanded", "false");
-      setFloatingOwner(false);
+      setOpen(false);
     });
     root.querySelector(".ee-close").addEventListener("click", function () {
-      state.open = false;
-      root.classList.remove("open");
-      fab.setAttribute("aria-expanded", "false");
-      setFloatingOwner(false);
+      setOpen(false);
     });
     root.querySelector(".ee-body").addEventListener("click", function (e) {
       var btn = e.target && e.target.closest("button[data-act]");
@@ -496,6 +489,19 @@
       }
     });
     return root;
+  }
+
+  function setOpen(open) {
+    var root = document.getElementById(ROOT_ID) || ensureRoot();
+    var fab = root.querySelector("#" + BTN_ID);
+    state.open = !!open;
+    root.classList.toggle("open", state.open);
+    if (fab) fab.setAttribute("aria-expanded", state.open ? "true" : "false");
+    setFloatingOwner(state.open);
+    if (state.open) renderDrawerBody();
+    if (window.EE_LAUNCHER_STACK && typeof window.EE_LAUNCHER_STACK.requestUpdate === "function") {
+      window.EE_LAUNCHER_STACK.requestUpdate();
+    }
   }
 
   function ensureLauncherStack() {
@@ -525,6 +531,26 @@
     else if (document.documentElement.getAttribute("data-ee-floating-open") === FLOAT_SOURCE)
       document.documentElement.removeAttribute("data-ee-floating-open");
     document.dispatchEvent(new CustomEvent("ee-floating-changed"));
+  }
+
+  function registerLauncherButton() {
+    if (!window.EE_LAUNCHER_STACK || typeof window.EE_LAUNCHER_STACK.registerButton !== "function") return;
+    window.EE_LAUNCHER_STACK.registerButton({
+      id: "favorites",
+      order: 30,
+      theme: "fav",
+      icon: "❤",
+      label: "Obľúbené",
+      getBadge: function () {
+        return state.items.length || 0;
+      },
+      isOpen: function () {
+        return !!state.open;
+      },
+      onClick: function () {
+        setOpen(!state.open);
+      },
+    });
   }
 
   function mergeByCode(base, incoming) {
@@ -567,6 +593,7 @@
         if (!ctx.loggedIn) return;
         state.items = loadLocal();
         ensureRoot();
+        registerLauncherButton();
         syncFloatingLayer();
         setFabCount();
         mountInlineToggles();
@@ -612,4 +639,22 @@
     observer.observe(root, { attributes: true, attributeFilter: ["class"] });
   };
   setTimeout(_setOpen, 0);
+
+  window.EE_FAVORITES = {
+    open: function () {
+      setOpen(true);
+    },
+    close: function () {
+      setOpen(false);
+    },
+    toggle: function () {
+      setOpen(!state.open);
+    },
+    isOpen: function () {
+      return !!state.open;
+    },
+    getCount: function () {
+      return state.items.length || 0;
+    },
+  };
 })();

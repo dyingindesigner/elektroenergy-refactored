@@ -216,10 +216,14 @@
   }
 
   function setOpen(root, open) {
+    if (!root) root = document.getElementById(ROOT_ID) || ensureRoot();
     state.open = !!open;
     root.classList.toggle("open", state.open);
     root.querySelector("#" + BTN_ID).setAttribute("aria-expanded", state.open ? "true" : "false");
     setFloatingOwner(state.open);
+    if (window.EE_LAUNCHER_STACK && typeof window.EE_LAUNCHER_STACK.requestUpdate === "function") {
+      window.EE_LAUNCHER_STACK.requestUpdate();
+    }
   }
 
   function syncFloatingLayer() {
@@ -235,6 +239,26 @@
     else if (document.documentElement.getAttribute("data-ee-floating-open") === FLOAT_SOURCE)
       document.documentElement.removeAttribute("data-ee-floating-open");
     document.dispatchEvent(new CustomEvent("ee-floating-changed"));
+  }
+
+  function registerLauncherButton() {
+    if (!window.EE_LAUNCHER_STACK || typeof window.EE_LAUNCHER_STACK.registerButton !== "function") return;
+    window.EE_LAUNCHER_STACK.registerButton({
+      id: "sku",
+      order: 20,
+      theme: "sku",
+      icon: "⌨",
+      label: "SKU+",
+      getBadge: function () {
+        return 0;
+      },
+      isOpen: function () {
+        return !!state.open;
+      },
+      onClick: function () {
+        setOpen(null, !state.open);
+      },
+    });
   }
 
   function bindUI(root) {
@@ -308,11 +332,27 @@
         state.context = ctx;
         if (!ctx.loggedIn) return;
         ensureRoot();
+        registerLauncherButton();
         syncFloatingLayer();
         refreshPlacement();
       })
       .catch(function () {});
   }
+
+  window.EE_SKUQA = {
+    open: function () {
+      setOpen(null, true);
+    },
+    close: function () {
+      setOpen(null, false);
+    },
+    toggle: function () {
+      setOpen(null, !state.open);
+    },
+    isOpen: function () {
+      return !!state.open;
+    },
+  };
 
   boot();
   window.addEventListener("resize", function () {

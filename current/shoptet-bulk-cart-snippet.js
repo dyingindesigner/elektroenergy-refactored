@@ -1208,6 +1208,9 @@
     if (!badgeEl) return;
     badgeEl.textContent = String(count);
     badgeEl.style.display = count ? "inline-block" : "none";
+    if (window.EE_LAUNCHER_STACK && typeof window.EE_LAUNCHER_STACK.requestUpdate === "function") {
+      window.EE_LAUNCHER_STACK.requestUpdate();
+    }
   }
 
   function renderDraftList() {
@@ -1569,6 +1572,20 @@
     else openDrawer();
   }
 
+  function registerLauncherButton() {
+    if (!window.EE_LAUNCHER_STACK || typeof window.EE_LAUNCHER_STACK.registerButton !== "function") return;
+    window.EE_LAUNCHER_STACK.registerButton({
+      id: "bulk",
+      order: 40,
+      theme: "bulk",
+      icon: "🛒",
+      label: "Bulk objednávanie",
+      getBadge: () => draftItems.length,
+      isOpen: () => root.classList.contains("open"),
+      onClick: () => toggleDrawer(),
+    });
+  }
+
   function positionDrawer() {
     /* Centrovaný modal — žiadne inline pozície */
   }
@@ -1593,6 +1610,8 @@
     open: openDrawer,
     close: closeDrawer,
     toggle: toggleDrawer,
+    isOpen: () => root.classList.contains("open"),
+    getDraftCount: () => draftItems.length,
     version: VERSION,
   };
 
@@ -1737,6 +1756,7 @@
   });
 
   draftItems = loadState();
+  registerLauncherButton();
   applyEntryHostLayout();
   renderDraftList();
   positionDrawer();
