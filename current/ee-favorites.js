@@ -31,8 +31,8 @@
   function ensureStyle() {
     if (document.getElementById(STYLE_ID)) return;
     var css =
-      "\n#" + ROOT_ID + "{position:fixed;left:14px;bottom:124px;z-index:2147483642;display:flex;flex-direction:column;align-items:flex-start;gap:8px}" +
-      "\n#" + STACK_ID + "{position:fixed;left:14px;bottom:max(12px, env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;align-items:flex-start;gap:8px;z-index:1300}" +
+      "\n#" + ROOT_ID + "{display:inline-flex;flex-direction:column;align-items:flex-start;gap:8px;width:max-content}" +
+      "\n#" + STACK_ID + "{position:fixed;left:14px;bottom:max(12px, env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;align-items:flex-start;gap:10px;z-index:1300}" +
       "\n#" + STACK_ID + " > #" + ROOT_ID + "{position:static !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;z-index:auto !important}" +
       "\n#" + BTN_ID + "{height:38px;min-width:44px;padding:0 12px;border-radius:999px;border:1px solid #cbd5e1;background:#111827;color:#fff;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px rgba(2,6,23,.22)}" +
       "\n#"+BTN_ID+" .ee-count{background:#ef4444;color:#fff;border-radius:999px;padding:1px 7px;font-size:11px;min-width:18px;text-align:center}" +
@@ -61,13 +61,13 @@
       "\n.product-btn.ee-fav-host-inline > form.pr-action.csrf-enabled .btn-cart{width:100%}" +
       "\n.ee-fav-list-action{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid #cbd5e1;background:#fff;font-size:18px;line-height:1;color:#475569}" +
       "\n.ee-fav-list-action:hover{border-color:#94a3b8;background:#f8fafc}" +
-      "\n.ee-fav-pdp-action{display:inline-flex;align-items:center;gap:5px;color:#6b7280;text-decoration:none;font-size:12px;font-weight:600;cursor:pointer}" +
-      "\n.ee-fav-pdp-action .ee-heart{font-size:14px;line-height:1}" +
-      "\n.ee-fav-pdp-action:hover{color:#111827}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp{cursor:pointer}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp .ee-heart{font-size:inherit;line-height:1;margin-right:.28em}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp.is-on{color:#dc2626}" +
       "\n.ee-fav-pdp-fallback-host{position:relative}" +
       "\n.ee-fav-pdp-fallback{position:absolute;right:0;top:0;z-index:2}" +
-      "\n.ee-fav-pdp-fallback .ee-fav-pdp-action{background:#fff;border:1px solid #cbd5e1;border-radius:999px;padding:6px 10px}" +
-      "\n#"+BTN_ID+", #"+ROOT_ID+" .ee-btn, #"+ROOT_ID+" .ee-close, .ee-fav-toggle, .ee-fav-pdp-action{touch-action:manipulation;-webkit-tap-highlight-color:transparent}" +
+      "\n.ee-fav-pdp-fallback a.link-icon.ee-fav-pdp{align-self:flex-end}" +
+      "\n#"+BTN_ID+", #"+ROOT_ID+" .ee-btn, #"+ROOT_ID+" .ee-close, .ee-fav-toggle, a.link-icon.ee-fav-pdp{touch-action:manipulation;-webkit-tap-highlight-color:transparent}" +
       "\n#" + ROOT_ID + ".ee-behind #" + BTN_ID + "{opacity:.86}" +
       "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host{z-index:1299 !important}" +
       "\nhtml[data-ee-floating-open] #shoptet-bulk-cart-fab{z-index:1299 !important}" +
@@ -231,16 +231,19 @@
   }
 
   function ensurePdpToggle() {
-    if (document.querySelector(".ee-fav-pdp-action")) return;
+    if (document.querySelector("a.link-icon.ee-fav-pdp")) return;
+    var legacyPdp = document.querySelectorAll("a.ee-fav-pdp-action");
+    for (var li = 0; li < legacyPdp.length; li++) legacyPdp[li].remove();
     if (!document.querySelector("h1")) return;
     var targetCfg = findPdpActionInsertTarget();
     var meta = getPdpMeta() || extractMetaFromNode(document) || null;
     if (!meta || !meta.product_code) return;
     var anchor = document.createElement("a");
     anchor.href = "#";
-    anchor.className = "link-icon ee-fav-pdp-action ee-fav-toggle";
+    anchor.className = "link-icon ee-fav-pdp ee-fav-toggle";
     anchor.dataset.eeCode = meta.product_code;
-    anchor.innerHTML = '<span class="ee-heart">♡</span><span>OBĽÚBENÉ</span>';
+    anchor.setAttribute("title", "Obľúbené");
+    anchor.innerHTML = '<span class="ee-heart" aria-hidden="true">♡</span><span>Obľúbené</span>';
     anchor.addEventListener("click", function (e) {
       e.preventDefault();
       toggleFavorite(meta, anchor);
@@ -295,6 +298,11 @@
     if (isInTopFeatured(node)) {
       var topExisting = node.querySelector(".ee-fav-card-toggle");
       if (topExisting) removeToggleNode(topExisting);
+      return;
+    }
+    if (node.querySelector("span.product-btn")) {
+      var rm = node.querySelector(".ee-fav-card-toggle");
+      if (rm) removeToggleNode(rm);
       return;
     }
     var meta = extractMetaFromNode(node);
@@ -376,7 +384,7 @@
       var on = isFav(code);
       toggles[i].classList.toggle("is-on", on);
       toggles[i].setAttribute("aria-pressed", on ? "true" : "false");
-      if (toggles[i].classList.contains("ee-fav-pdp-action")) {
+      if (toggles[i].classList.contains("ee-fav-pdp")) {
         var heart = toggles[i].querySelector(".ee-heart");
         if (heart) heart.textContent = on ? "❤" : "♡";
       } else if (toggles[i].classList.contains("ee-fav-icon-only")) {
