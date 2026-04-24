@@ -304,9 +304,19 @@
       } catch (_e) {}
     }
 
+    function panelSize() {
+      var rect = panel.getBoundingClientRect();
+      var w = Math.round(rect.width || panel.offsetWidth || 0);
+      var h = Math.round(rect.height || panel.offsetHeight || 0);
+      if (w < 80 || h < 80) return null;
+      return { w: w, h: h };
+    }
+
     function clampPos(pos) {
-      var w = Math.max(160, Math.round(panel.offsetWidth || 320));
-      var h = Math.max(120, Math.round(panel.offsetHeight || 240));
+      var size = panelSize();
+      if (!size) return null;
+      var w = Math.max(160, size.w);
+      var h = Math.max(120, size.h);
       var maxX = Math.max(8, window.innerWidth - w - 8);
       var maxY = Math.max(8, window.innerHeight - h - 8);
       return {
@@ -317,6 +327,7 @@
 
     function applyPos(pos) {
       var c = clampPos(pos);
+      if (!c) return null;
       panel.classList.add("ee-user-positioned");
       panel.style.left = c.x + "px";
       panel.style.top = c.y + "px";
@@ -330,7 +341,20 @@
       if (!isDesktop()) return;
       var p = loadPos();
       if (!p) return;
-      applyPos(p);
+      // Defer until panel is actually painted/open, otherwise width/height can be 0.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          var ok = applyPos(p);
+          if (!ok) {
+            panel.classList.remove("ee-user-positioned");
+            panel.style.left = "";
+            panel.style.top = "";
+            panel.style.right = "";
+            panel.style.bottom = "";
+            panel.style.transform = "";
+          }
+        });
+      });
     }
 
     function onPointerMove(e) {
@@ -351,6 +375,10 @@
     handle.addEventListener("pointerdown", function (e) {
       if (!isDesktop()) return;
       if (e.button !== 0) return;
+      var interactive = e.target && e.target.closest ? e.target.closest("button,a,input,textarea,select,[data-act]") : null;
+      if (interactive) return;
+      var size = panelSize();
+      if (!size) return;
       drag = {
         originX: e.clientX,
         originY: e.clientY,

@@ -74,8 +74,8 @@
     {
         "name":  "ee-launcher-stack.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-launcher-stack.js",
-        "sha256":  "cbe2fbee17c82b6beb7b47d48f81ad343ba8a7101a46265f5427c7bd7845f7f0",
-        "downloaded_at":  "2026-04-25T23:00:00"
+        "sha256":  "10b5c48db259ec5862dc689aa458ef5f05ef64794f070be7c184341a871de402",
+        "downloaded_at":  "2026-04-25T23:20:00"
     },
     {
         "name":  "ee-favorites.js",
