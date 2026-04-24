@@ -59,7 +59,7 @@
       STACK_ID +
       " > #ee-skuqa-root, #" +
       STACK_ID +
-      " > #shoptet-bulk-entry-host{position:static !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;z-index:auto !important;width:100% !important;margin:0 !important;display:flex !important;flex-direction:column !important;align-items:stretch !important;gap:8px;box-sizing:border-box}" +
+      " > #shoptet-bulk-entry-host{position:absolute !important;left:0 !important;top:0 !important;right:auto !important;bottom:auto !important;z-index:auto !important;width:1px !important;height:1px !important;margin:0 !important;overflow:visible !important;display:block !important;box-sizing:border-box;pointer-events:none}" +
       "\n#" +
       STACK_ID +
       " > ." +
