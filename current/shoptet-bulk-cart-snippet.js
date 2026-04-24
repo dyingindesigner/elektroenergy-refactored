@@ -1564,29 +1564,37 @@
     fab.style.visibility = "visible";
     fab.style.pointerEvents = "auto";
   }
+  function toggleDrawer() {
+    if (root.classList.contains("open")) closeDrawer();
+    else openDrawer();
+  }
 
   function positionDrawer() {
     /* Centrovaný modal — žiadne inline pozície */
   }
 
   fab.addEventListener("click", () => {
-    if (root.classList.contains("open")) closeDrawer();
-    else openDrawer();
+    toggleDrawer();
   });
-  // Fallback: if a foreign duplicate bulk button still appears (theme cache/legacy include),
-  // route its click to the current drawer instance.
+  // Global delegation: no matter which bulk button instance gets clicked
+  // (legacy duplicate or current one), always drive the current drawer.
   document.addEventListener(
     "click",
     (e) => {
       const anyBulkFab = e.target && e.target.closest ? e.target.closest(`#${FAB_ID}`) : null;
-      if (!anyBulkFab || anyBulkFab === fab) return;
+      if (!anyBulkFab) return;
       e.preventDefault();
       e.stopPropagation();
-      if (root.classList.contains("open")) closeDrawer();
-      else openDrawer();
+      toggleDrawer();
     },
     true
   );
+  window.EE_BULK_CART = {
+    open: openDrawer,
+    close: closeDrawer,
+    toggle: toggleDrawer,
+    version: VERSION,
+  };
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && root.classList.contains("open")) {
