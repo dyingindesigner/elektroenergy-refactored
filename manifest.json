@@ -74,8 +74,8 @@
     {
         "name":  "ee-favorites.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-favorites.js",
-        "sha256":  "b87e1a29dbcda65f8b7b084df34b8bf5d6d8ce0f71e1c5da094f5da1299d6e4d",
-        "downloaded_at":  "2026-04-23T08:15:00"
+        "sha256":  "d21d0fd59b546fd1405e066bfd8ffccb64cd84157b396ad6f6b437f522f2aad3",
+        "downloaded_at":  "2026-04-24T14:00:00"
     },
     {
         "name":  "ee-saved-lists.js",
