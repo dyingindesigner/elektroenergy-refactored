@@ -1002,7 +1002,7 @@
       entryHost.style.bottom = "max(12px, env(safe-area-inset-bottom, 0px))";
       entryHost.style.top = "auto";
       entryHost.style.width = "auto";
-      entryHost.style.zIndex = "2147483644";
+      entryHost.style.zIndex = "1250";
       return;
     }
     entryHost.classList.add("bulk-in-cart");

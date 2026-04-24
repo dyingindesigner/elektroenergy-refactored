@@ -74,25 +74,25 @@
     {
         "name":  "ee-favorites.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-favorites.js",
-        "sha256":  "a6d95ae0dd02be83bb5a108e262689664d57b79dfc7e7ac0a32347cfe7d02f0d",
-        "downloaded_at":  "2026-04-24T18:30:00"
+        "sha256":  "908cc08bd68be63d5180685d26805e8a04952bf6dd853f467e9d6edaca8e0750",
+        "downloaded_at":  "2026-04-24T22:00:00"
     },
     {
         "name":  "ee-saved-lists.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-saved-lists.js",
-        "sha256":  "e86e98076bae850312d587eb40d1a695568dde76ff38740f323695067e13faf9",
-        "downloaded_at":  "2026-04-23T08:15:00"
+        "sha256":  "478c43dd1867e13479ea4c4b554d0a96c7a0d5ab0a6f42fdd3184b723d6f89fe",
+        "downloaded_at":  "2026-04-24T22:00:00"
     },
     {
         "name":  "ee-sku-quick-add.js",
         "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-sku-quick-add.js",
-        "sha256":  "3db3e93f0e565c8c6e99a6cb48aef07f85f90e410757328a5256d70aeb053b24",
-        "downloaded_at":  "2026-04-23T08:15:00"
+        "sha256":  "d972dbea0001c91fdb91d63356abafdbf4ea4c678ee65be3daf608a13b779a01",
+        "downloaded_at":  "2026-04-24T22:00:00"
     },
     {
         "name":  "shoptet-bulk-cart-snippet.js",
-        "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/shoptet-bulk-order-cdn@5cf0b5077ec5e0e97f3ab812caf263b3bd3af6ec/shoptet-bulk-cart-snippet.js",
-        "sha256":  "1c010c7a195c3773cf84b5ecc324e86a7a39ce9b29197bb6dbff438c8cdb77a6",
-        "downloaded_at":  "2026-04-21T12:26:44"
+        "url":  "https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/shoptet-bulk-cart-snippet.js",
+        "sha256":  "011fe560faa41f27d5a25297d9b735dc23edc49b19bacd15501160fd8c099420",
+        "downloaded_at":  "2026-04-24T22:00:00"
     }
 ]

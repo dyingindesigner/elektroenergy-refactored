@@ -32,7 +32,7 @@
     if (document.getElementById(STYLE_ID)) return;
     var css =
       "\n#" + ROOT_ID + "{display:inline-flex;flex-direction:column;align-items:flex-start;gap:8px;width:max-content}" +
-      "\n#" + STACK_ID + "{position:fixed;left:14px;bottom:max(12px, env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;align-items:flex-start;gap:10px;z-index:1300}" +
+      "\n#" + STACK_ID + "{position:fixed;left:14px;bottom:calc(52px + max(12px, env(safe-area-inset-bottom, 0px)));display:flex;flex-direction:column;align-items:flex-start;gap:10px;z-index:1320}" +
       "\n#" + STACK_ID + " > #" + ROOT_ID + "{position:static !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;z-index:auto !important}" +
       "\n#" + BTN_ID + "{height:38px;min-width:44px;padding:0 12px;border-radius:999px;border:1px solid #cbd5e1;background:#111827;color:#fff;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px rgba(2,6,23,.22)}" +
       "\n#"+BTN_ID+" .ee-count{background:#ef4444;color:#fff;border-radius:999px;padding:1px 7px;font-size:11px;min-width:18px;text-align:center}" +
@@ -51,8 +51,8 @@
       "\n#"+ROOT_ID+" .ee-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}" +
       "\n#"+ROOT_ID+" .ee-btn{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:6px 8px;font-size:12px;cursor:pointer}" +
       "\n#"+ROOT_ID+" .ee-btn.primary{background:#16a34a;border-color:#16a34a;color:#fff}" +
-      "\n.ee-fav-toggle{border:none;background:transparent;padding:0;cursor:pointer;color:#475569;font-size:18px;line-height:1}" +
-      "\n.ee-fav-toggle.is-on{color:#dc2626}" +
+      "\n.ee-fav-card-toggle .ee-fav-toggle{border:none;background:transparent;padding:0;cursor:pointer;color:#475569;font-size:18px;line-height:1}" +
+      "\n.ee-fav-card-toggle .ee-fav-toggle.is-on{color:#dc2626}" +
       "\n.ee-fav-inline{display:inline-flex;align-items:center;gap:6px}" +
       "\n.ee-fav-host-inline{display:inline-flex;align-items:center;gap:6px}" +
       "\n.product-btn.ee-fav-host-inline{display:flex;align-items:center;gap:6px;width:100%}" +
@@ -61,13 +61,12 @@
       "\n.product-btn.ee-fav-host-inline > form.pr-action.csrf-enabled .btn-cart{width:100%}" +
       "\n.ee-fav-list-action{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid #cbd5e1;background:#fff;font-size:18px;line-height:1;color:#475569}" +
       "\n.ee-fav-list-action:hover{border-color:#94a3b8;background:#f8fafc}" +
-      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp{cursor:pointer}" +
-      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp .ee-heart{font-size:inherit;line-height:1;margin-right:.28em}" +
-      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp.is-on{color:#dc2626}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp{cursor:pointer;font:inherit;color:inherit;text-decoration:inherit}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp .ee-heart{font-size:inherit;line-height:1;margin-right:.28em;font-weight:inherit}" +
       "\n.ee-fav-pdp-fallback-host{position:relative}" +
       "\n.ee-fav-pdp-fallback{position:absolute;right:0;top:0;z-index:2}" +
       "\n.ee-fav-pdp-fallback a.link-icon.ee-fav-pdp{align-self:flex-end}" +
-      "\n#"+BTN_ID+", #"+ROOT_ID+" .ee-btn, #"+ROOT_ID+" .ee-close, .ee-fav-toggle, a.link-icon.ee-fav-pdp{touch-action:manipulation;-webkit-tap-highlight-color:transparent}" +
+      "\n#"+BTN_ID+", #"+ROOT_ID+" .ee-btn, #"+ROOT_ID+" .ee-close, .ee-fav-card-toggle .ee-fav-toggle, a.link-icon.ee-fav-pdp{touch-action:manipulation;-webkit-tap-highlight-color:transparent}" +
       "\n#" + ROOT_ID + ".ee-behind #" + BTN_ID + "{opacity:.86}" +
       "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host{z-index:1299 !important}" +
       "\nhtml[data-ee-floating-open] #shoptet-bulk-cart-fab{z-index:1299 !important}" +
@@ -240,7 +239,7 @@
     if (!meta || !meta.product_code) return;
     var anchor = document.createElement("a");
     anchor.href = "#";
-    anchor.className = "link-icon ee-fav-pdp ee-fav-toggle";
+    anchor.className = "link-icon ee-fav-pdp";
     anchor.dataset.eeCode = meta.product_code;
     anchor.setAttribute("title", "Obľúbené");
     anchor.innerHTML = '<span class="ee-heart" aria-hidden="true">♡</span><span>Obľúbené</span>';
@@ -378,7 +377,7 @@
   }
 
   function refreshToggleStates() {
-    var toggles = document.querySelectorAll(".ee-fav-toggle[data-ee-code]");
+    var toggles = document.querySelectorAll(".ee-fav-toggle[data-ee-code], a.link-icon.ee-fav-pdp[data-ee-code]");
     for (var i = 0; i < toggles.length; i++) {
       var code = toggles[i].dataset.eeCode;
       var on = isFav(code);

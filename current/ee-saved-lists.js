@@ -59,7 +59,7 @@
       "\n#" +
       ROOT_ID +
       "{position:fixed;left:14px;bottom:168px;z-index:2147483641}" +
-      "\n#" + STACK_ID + "{position:fixed;left:14px;bottom:max(12px, env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;align-items:flex-start;gap:8px;z-index:1300}" +
+      "\n#" + STACK_ID + "{position:fixed;left:14px;bottom:calc(52px + max(12px, env(safe-area-inset-bottom, 0px)));display:flex;flex-direction:column;align-items:flex-start;gap:10px;z-index:1320}" +
       "\n#" + STACK_ID + " > #" + ROOT_ID + "{position:static !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;z-index:auto !important}" +
       "\n#" + ROOT_ID + ".ee-behind #" + BTN_ID + "{opacity:.86}" +
       "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host{z-index:1299 !important}" +
