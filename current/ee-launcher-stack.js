@@ -95,7 +95,7 @@
       STACK_ID +
       " #ee-favorites-fab .ee-count, #" +
       STACK_ID +
-      " #shoptet-bulk-cart-fab .bulk-badge{position:absolute;top:2px;right:3px;display:inline-flex;align-items:center;justify-content:center;min-width:14px;height:14px;padding:0 3px;font-size:9px;line-height:1;border-radius:999px;z-index:1;margin-left:0;vertical-align:baseline}" +
+      " #shoptet-bulk-cart-fab .bulk-badge{position:absolute;top:2px;right:3px;display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;font-size:9px;font-weight:700;line-height:1;white-space:nowrap;border-radius:999px;z-index:1;margin-left:0;vertical-align:baseline;box-sizing:border-box}" +
       "\n#" +
       STACK_ID +
       " > #ee-favorites-root:not(.open) #ee-favorites-drawer, #" +
