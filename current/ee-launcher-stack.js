@@ -276,135 +276,6 @@
     host.__eeLauncherResizeObs = ro;
   }
 
-  function makePanelDraggable(opts) {
-    if (!opts || !opts.panelEl || !opts.storageKey) return null;
-    var panel = opts.panelEl;
-    var handle = opts.handleEl || panel;
-    var desktopMinWidth = Number(opts.desktopMinWidth || 981);
-    var key = String(opts.storageKey);
-    var drag = null;
-
-    function isDesktop() {
-      return window.innerWidth >= desktopMinWidth;
-    }
-
-    function loadPos() {
-      try {
-        var parsed = JSON.parse(localStorage.getItem(key) || "null");
-        if (!parsed || !isFinite(parsed.x) || !isFinite(parsed.y)) return null;
-        return { x: Number(parsed.x), y: Number(parsed.y) };
-      } catch (_e) {
-        return null;
-      }
-    }
-
-    function savePos(pos) {
-      try {
-        localStorage.setItem(key, JSON.stringify({ x: Math.round(pos.x), y: Math.round(pos.y) }));
-      } catch (_e) {}
-    }
-
-    function panelSize() {
-      var rect = panel.getBoundingClientRect();
-      var w = Math.round(rect.width || panel.offsetWidth || 0);
-      var h = Math.round(rect.height || panel.offsetHeight || 0);
-      if (w < 80 || h < 80) return null;
-      return { w: w, h: h };
-    }
-
-    function clampPos(pos) {
-      var size = panelSize();
-      if (!size) return null;
-      var w = Math.max(160, size.w);
-      var h = Math.max(120, size.h);
-      var maxX = Math.max(8, window.innerWidth - w - 8);
-      var maxY = Math.max(8, window.innerHeight - h - 8);
-      return {
-        x: Math.min(maxX, Math.max(8, Number(pos.x) || 8)),
-        y: Math.min(maxY, Math.max(8, Number(pos.y) || 8)),
-      };
-    }
-
-    function applyPos(pos) {
-      var c = clampPos(pos);
-      if (!c) return null;
-      panel.classList.add("ee-user-positioned");
-      panel.style.left = c.x + "px";
-      panel.style.top = c.y + "px";
-      panel.style.right = "auto";
-      panel.style.bottom = "auto";
-      panel.style.transform = "none";
-      return c;
-    }
-
-    function applySaved() {
-      if (!isDesktop()) return;
-      var p = loadPos();
-      if (!p) return;
-      // Defer until panel is actually painted/open, otherwise width/height can be 0.
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          var ok = applyPos(p);
-          if (!ok) {
-            panel.classList.remove("ee-user-positioned");
-            panel.style.left = "";
-            panel.style.top = "";
-            panel.style.right = "";
-            panel.style.bottom = "";
-            panel.style.transform = "";
-          }
-        });
-      });
-    }
-
-    function onPointerMove(e) {
-      if (!drag) return;
-      var x = drag.startX + (e.clientX - drag.originX);
-      var y = drag.startY + (e.clientY - drag.originY);
-      applyPos({ x: x, y: y });
-    }
-
-    function onPointerUp() {
-      if (!drag) return;
-      savePos({ x: parseFloat(panel.style.left || "0"), y: parseFloat(panel.style.top || "0") });
-      drag = null;
-      window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerup", onPointerUp);
-    }
-
-    handle.addEventListener("pointerdown", function (e) {
-      if (!isDesktop()) return;
-      if (e.button !== 0) return;
-      var interactive = e.target && e.target.closest ? e.target.closest("button,a,input,textarea,select,[data-act]") : null;
-      if (interactive) return;
-      var size = panelSize();
-      if (!size) return;
-      drag = {
-        originX: e.clientX,
-        originY: e.clientY,
-        startX: parseFloat(panel.style.left || panel.getBoundingClientRect().left || 8),
-        startY: parseFloat(panel.style.top || panel.getBoundingClientRect().top || 8),
-      };
-      window.addEventListener("pointermove", onPointerMove);
-      window.addEventListener("pointerup", onPointerUp);
-    });
-
-    window.addEventListener("resize", function () {
-      if (!isDesktop()) return;
-      var p = loadPos();
-      if (p) applyPos(p);
-    });
-
-    return {
-      applySaved: applySaved,
-      clearSaved: function () {
-        try {
-          localStorage.removeItem(key);
-        } catch (_e) {}
-      },
-    };
-  }
-
   ensureHost();
   ensureStyle();
   requestUpdate();
@@ -412,7 +283,7 @@
   tickTimer = setInterval(requestUpdate, 450);
 
   window.EE_LAUNCHER_STACK = {
-    version: "2026-04-25-launcher-v10",
+    version: "2026-04-25-launcher-v11",
     STACK_ID: STACK_ID,
     ensureHost: ensureHost,
     ensureStyle: ensureStyle,
@@ -420,7 +291,6 @@
     scheduleReorder: scheduleReorder,
     registerButton: registerButton,
     unregisterButton: unregisterButton,
-    makePanelDraggable: makePanelDraggable,
     requestUpdate: requestUpdate,
     _tick: tickTimer,
   };

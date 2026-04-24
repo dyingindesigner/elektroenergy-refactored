@@ -19,7 +19,6 @@
 
   var core = window.EE_CORE || null;
   var sync = window.EE_FEATURES_SYNC || null;
-  var dragPanelApi = null;
   var state = {
     context: null,
     open: false,
@@ -140,13 +139,11 @@
       ROOT_ID +
       ".ee-desktop-inline .ee-overlay{display:none;pointer-events:none}#" +
       PANEL_ID +
-      "{left:14px;right:auto;bottom:258px;width:min(360px,calc(100vw - 28px));border-radius:12px;transform:translateY(10px) scale(.98);opacity:0;pointer-events:none}#" +
+      "{left:50%;right:auto;bottom:74px;width:min(420px,calc(100vw - 24px));border-radius:12px;transform:translateX(-50%) translateY(10px) scale(.98);opacity:0;pointer-events:none}#" +
       ROOT_ID +
       ".open #" +
       PANEL_ID +
-      "{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}}" +
-      "\n@media (min-width:981px){#" + PANEL_ID + ".ee-user-positioned{transform:none !important;opacity:1 !important;pointer-events:auto}}" +
-      "\n@media (min-width:981px){#" + ROOT_ID + " .ee-title{cursor:grab}#" + ROOT_ID + " .ee-title:active{cursor:grabbing}}" +
+      "{transform:translateX(-50%) translateY(0) scale(1);opacity:1;pointer-events:auto}}" +
       "\n@media (max-width:980px){#" + BTN_ID + "{height:36px;padding:0 10px;font-size:12px}}";
     var style = document.createElement("style");
     style.id = STYLE_ID;
@@ -181,13 +178,6 @@
     ensureLauncherStack().appendChild(root);
     bindUI(root);
     renderHistory(root);
-    if (!dragPanelApi && window.EE_LAUNCHER_STACK && typeof window.EE_LAUNCHER_STACK.makePanelDraggable === "function") {
-      dragPanelApi = window.EE_LAUNCHER_STACK.makePanelDraggable({
-        panelEl: root.querySelector("#" + PANEL_ID),
-        handleEl: root.querySelector(".ee-title"),
-        storageKey: "ee_skuqa_panel_pos_v1",
-      });
-    }
     return root;
   }
 
@@ -231,7 +221,6 @@
     root.classList.toggle("open", state.open);
     root.querySelector("#" + BTN_ID).setAttribute("aria-expanded", state.open ? "true" : "false");
     setFloatingOwner(state.open);
-    if (state.open && dragPanelApi && typeof dragPanelApi.applySaved === "function") dragPanelApi.applySaved();
     if (window.EE_LAUNCHER_STACK && typeof window.EE_LAUNCHER_STACK.requestUpdate === "function") {
       window.EE_LAUNCHER_STACK.requestUpdate();
     }

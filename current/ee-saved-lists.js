@@ -18,7 +18,6 @@
   var FLOAT_SOURCE = "lists";
   var sync = window.EE_FEATURES_SYNC || null;
   var core = window.EE_CORE || null;
-  var dragPanelApi = null;
   var state = {
     context: null,
     open: false,
@@ -33,7 +32,6 @@
     if (toggle) toggle.setAttribute("aria-expanded", state.open ? "true" : "false");
     setFloatingOwner(state.open);
     if (state.open) renderListRows();
-    if (state.open && dragPanelApi && typeof dragPanelApi.applySaved === "function") dragPanelApi.applySaved();
     if (window.EE_LAUNCHER_STACK && typeof window.EE_LAUNCHER_STACK.requestUpdate === "function") {
       window.EE_LAUNCHER_STACK.requestUpdate();
     }
@@ -163,13 +161,11 @@
       ROOT_ID +
       "{bottom:212px}#" +
       PANEL_ID +
-      "{left:auto;right:14px;bottom:210px;width:min(520px,calc(100vw - 24px));max-height:68vh;border-radius:14px;transform:translateY(12px) scale(.98);opacity:0;pointer-events:none}#" +
+      "{left:50%;right:auto;bottom:74px;width:min(520px,calc(100vw - 24px));max-height:68vh;border-radius:14px;transform:translateX(-50%) translateY(12px) scale(.98);opacity:0;pointer-events:none}#" +
       ROOT_ID +
       ".open #" +
       PANEL_ID +
-      "{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}}" +
-      "\n@media (min-width:981px){#" + PANEL_ID + ".ee-user-positioned{transform:none !important;opacity:1 !important;pointer-events:auto}}" +
-      "\n@media (min-width:981px){#" + ROOT_ID + " .ee-head{cursor:grab}#" + ROOT_ID + " .ee-head:active{cursor:grabbing}}" +
+      "{transform:translateX(-50%) translateY(0) scale(1);opacity:1;pointer-events:auto}}" +
       "\n@media (max-width:980px){#" + BTN_ID + "{height:36px;font-size:12px;padding:0 10px}}";
     var style = document.createElement("style");
     style.id = STYLE_ID;
@@ -343,13 +339,6 @@
         loadListIntoForm(loadId);
       }
     });
-    if (!dragPanelApi && window.EE_LAUNCHER_STACK && typeof window.EE_LAUNCHER_STACK.makePanelDraggable === "function") {
-      dragPanelApi = window.EE_LAUNCHER_STACK.makePanelDraggable({
-        panelEl: root.querySelector("#" + PANEL_ID),
-        handleEl: root.querySelector(".ee-head"),
-        storageKey: "ee_lists_panel_pos_v1",
-      });
-    }
     return root;
   }
 

@@ -63,7 +63,6 @@
   let searchAbortController = null;
   let searchRequestId = 0;
   let searchActiveIndex = -1;
-  let dragPanelApi = null;
   /** @type {{id:string, code:string, qty:number, title:string, href:string, img:string, unitPrice:string, avail:string, stockCount:number|null, resolved:boolean, invalid:boolean, suggestion:{code:string,title:string}|null}[]} */
   let draftItems = [];
 
@@ -673,7 +672,6 @@
   pointer-events: auto;
 }
 .bulk-head { flex-shrink: 0; padding: var(--bulk-space-2) var(--bulk-space-3); border-bottom: 1px solid #f1f5f9; display: flex; align-items: flex-start; justify-content: space-between; gap: var(--bulk-space-1); }
-@media (min-width: 981px) { .bulk-head { cursor: grab; } .bulk-head:active { cursor: grabbing; } #${DRAWER_ID}.ee-user-positioned { transform: none !important; opacity: 1 !important; pointer-events: auto; } }
 .bulk-head-title { font-weight: 700; font-size: clamp(18px, 1.8vw, 22px); color: var(--bulk-text); line-height: 1.2; letter-spacing: -0.01em; }
 .bulk-head-sub { font-size: clamp(12px, 1.2vw, 13px); color: #475569; margin-top: 2px; line-height: 1.4; max-width: 44ch; }
 .bulk-head-actions { display: flex; gap: 8px; }
@@ -1561,7 +1559,6 @@
     fab.style.pointerEvents = "none";
     root.classList.add("open");
     drawer.classList.add("open");
-    if (dragPanelApi && typeof dragPanelApi.applySaved === "function") dragPanelApi.applySaved();
   }
   function closeDrawer() {
     root.classList.remove("open");
@@ -1617,13 +1614,6 @@
     getDraftCount: () => draftItems.length,
     version: VERSION,
   };
-  if (window.EE_LAUNCHER_STACK && typeof window.EE_LAUNCHER_STACK.makePanelDraggable === "function") {
-    dragPanelApi = window.EE_LAUNCHER_STACK.makePanelDraggable({
-      panelEl: drawer,
-      handleEl: drawer.querySelector(".bulk-head"),
-      storageKey: "ee_bulk_panel_pos_v1",
-    });
-  }
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && root.classList.contains("open")) {
