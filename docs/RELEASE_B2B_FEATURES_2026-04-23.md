@@ -9,6 +9,7 @@ This release adds three new mobile-first features as separate scripts (no edits 
 ## New Scripts
 
 - `current/ee-features-sync.js`
+- `current/ee-launcher-stack.js` (shared FAB column layout; load before the three feature scripts)
 - `current/ee-favorites.js`
 - `current/ee-saved-lists.js`
 - `current/ee-sku-quick-add.js`
@@ -34,9 +35,10 @@ Add these tags in `<head>` (after `ee-core.js` is loaded):
 
 ```html
 <script defer src="https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-features-sync.js"></script>
-<script defer src="https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-favorites.js"></script>
+<script defer src="https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-launcher-stack.js"></script>
 <script defer src="https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-saved-lists.js"></script>
 <script defer src="https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-sku-quick-add.js"></script>
+<script defer src="https://cdn.jsdelivr.net/gh/dyingindesigner/elektroenergy-refactored@main/current/ee-favorites.js"></script>
 ```
 
 ## UI Placement Rules

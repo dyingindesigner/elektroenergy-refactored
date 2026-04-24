@@ -31,9 +31,7 @@
   function ensureStyle() {
     if (document.getElementById(STYLE_ID)) return;
     var css =
-      "\n#" + ROOT_ID + "{display:inline-flex;flex-direction:column;align-items:flex-start;gap:8px;width:max-content}" +
-      "\n#" + STACK_ID + "{position:fixed;left:14px;bottom:calc(52px + max(12px, env(safe-area-inset-bottom, 0px)));display:flex;flex-direction:column;align-items:flex-start;gap:10px;z-index:1320}" +
-      "\n#" + STACK_ID + " > #" + ROOT_ID + "{position:static !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;z-index:auto !important}" +
+      "\n#" + ROOT_ID + "{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:100%;box-sizing:border-box}" +
       "\n#" + BTN_ID + "{height:38px;min-width:44px;padding:0 12px;border-radius:999px;border:1px solid #cbd5e1;background:#111827;color:#fff;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px rgba(2,6,23,.22)}" +
       "\n#"+BTN_ID+" .ee-count{background:#ef4444;color:#fff;border-radius:999px;padding:1px 7px;font-size:11px;min-width:18px;text-align:center}" +
       "\n#"+DRAWER_ID+"{position:fixed;left:0;right:0;bottom:0;top:auto;max-height:min(78svh,640px);background:#fff;border-top-left-radius:14px;border-top-right-radius:14px;transform:translateY(106%);transition:transform .2s ease;z-index:2147483645;display:flex;flex-direction:column;border:1px solid #e2e8f0}" +
@@ -61,8 +59,10 @@
       "\n.product-btn.ee-fav-host-inline > form.pr-action.csrf-enabled .btn-cart{width:100%}" +
       "\n.ee-fav-list-action{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid #cbd5e1;background:#fff;font-size:18px;line-height:1;color:#475569}" +
       "\n.ee-fav-list-action:hover{border-color:#94a3b8;background:#f8fafc}" +
-      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp{cursor:pointer;font:inherit;color:inherit;text-decoration:inherit}" +
-      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp .ee-heart{font-size:inherit;line-height:1;margin-right:.28em;font-weight:inherit}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp{cursor:pointer;text-decoration:none;font:inherit;color:inherit}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp .ee-fav-pdp-label{text-decoration:underline}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp::before{content:\"♡\";display:inline-block;margin-right:.35em;text-decoration:none !important;font-weight:400}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp.is-on::before{content:\"❤\";color:#dc2626}" +
       "\n.ee-fav-pdp-fallback-host{position:relative}" +
       "\n.ee-fav-pdp-fallback{position:absolute;right:0;top:0;z-index:2}" +
       "\n.ee-fav-pdp-fallback a.link-icon.ee-fav-pdp{align-self:flex-end}" +
@@ -242,7 +242,7 @@
     anchor.className = "link-icon ee-fav-pdp";
     anchor.dataset.eeCode = meta.product_code;
     anchor.setAttribute("title", "Obľúbené");
-    anchor.innerHTML = '<span class="ee-heart" aria-hidden="true">♡</span><span>Obľúbené</span>';
+    anchor.innerHTML = '<span class="ee-fav-pdp-label">Obľúbené</span>';
     anchor.addEventListener("click", function (e) {
       e.preventDefault();
       toggleFavorite(meta, anchor);
@@ -383,12 +383,9 @@
       var on = isFav(code);
       toggles[i].classList.toggle("is-on", on);
       toggles[i].setAttribute("aria-pressed", on ? "true" : "false");
-      if (toggles[i].classList.contains("ee-fav-pdp")) {
-        var heart = toggles[i].querySelector(".ee-heart");
-        if (heart) heart.textContent = on ? "❤" : "♡";
-      } else if (toggles[i].classList.contains("ee-fav-icon-only")) {
+      if (toggles[i].classList.contains("ee-fav-icon-only")) {
         toggles[i].textContent = on ? "❤" : "♡";
-      } else {
+      } else if (!toggles[i].classList.contains("ee-fav-pdp")) {
         var heartNode = toggles[i].querySelector(".ee-heart");
         if (heartNode) heartNode.textContent = on ? "❤" : "♡";
       }
@@ -503,10 +500,15 @@
 
   function ensureLauncherStack() {
     var host = document.getElementById(STACK_ID);
-    if (host) return host;
-    host = document.createElement("div");
-    host.id = STACK_ID;
-    document.body.appendChild(host);
+    if (!host) {
+      host = document.createElement("div");
+      host.id = STACK_ID;
+      document.body.appendChild(host);
+    }
+    if (window.EE_LAUNCHER_STACK) {
+      if (typeof window.EE_LAUNCHER_STACK.ensureStyle === "function") window.EE_LAUNCHER_STACK.ensureStyle();
+      if (typeof window.EE_LAUNCHER_STACK.scheduleReorder === "function") window.EE_LAUNCHER_STACK.scheduleReorder();
+    }
     return host;
   }
 

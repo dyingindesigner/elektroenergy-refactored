@@ -81,11 +81,7 @@
   function ensureStyle() {
     if (document.getElementById(STYLE_ID)) return;
     var css =
-      "\n#" +
-      ROOT_ID +
-      "{position:fixed;left:14px;bottom:214px;z-index:2147483641}" +
-      "\n#" + STACK_ID + "{position:fixed;left:14px;bottom:calc(52px + max(12px, env(safe-area-inset-bottom, 0px)));display:flex;flex-direction:column;align-items:flex-start;gap:10px;z-index:1320}" +
-      "\n#" + STACK_ID + " > #" + ROOT_ID + "{position:static !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;z-index:auto !important}" +
+      "\n#" + ROOT_ID + "{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:100%;box-sizing:border-box}" +
       "\n#" + ROOT_ID + ".ee-behind #" + BTN_ID + "{opacity:.86}" +
       "\nhtml[data-ee-floating-open] #shoptet-bulk-entry-host{z-index:1299 !important}" +
       "\nhtml[data-ee-floating-open] #shoptet-bulk-cart-fab{z-index:1299 !important}" +
@@ -187,10 +183,15 @@
 
   function ensureLauncherStack() {
     var host = document.getElementById(STACK_ID);
-    if (host) return host;
-    host = document.createElement("div");
-    host.id = STACK_ID;
-    document.body.appendChild(host);
+    if (!host) {
+      host = document.createElement("div");
+      host.id = STACK_ID;
+      document.body.appendChild(host);
+    }
+    if (window.EE_LAUNCHER_STACK) {
+      if (typeof window.EE_LAUNCHER_STACK.ensureStyle === "function") window.EE_LAUNCHER_STACK.ensureStyle();
+      if (typeof window.EE_LAUNCHER_STACK.scheduleReorder === "function") window.EE_LAUNCHER_STACK.scheduleReorder();
+    }
     return host;
   }
 
