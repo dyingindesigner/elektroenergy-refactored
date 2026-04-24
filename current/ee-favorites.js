@@ -59,10 +59,10 @@
       "\n.product-btn.ee-fav-host-inline > form.pr-action.csrf-enabled .btn-cart{width:100%}" +
       "\n.ee-fav-list-action{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid #cbd5e1;background:#fff;font-size:18px;line-height:1;color:#475569}" +
       "\n.ee-fav-list-action:hover{border-color:#94a3b8;background:#f8fafc}" +
-      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp{cursor:pointer;text-decoration:none;font:inherit;color:inherit}" +
-      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp .ee-fav-pdp-label{text-decoration:underline}" +
-      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp::before{content:\"♡\";display:inline-block;margin-right:.35em;text-decoration:none !important;font-weight:400}" +
-      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp.is-on::before{content:\"❤\";color:#dc2626}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp,.ee-fav-pdp-fallback a.link-icon.ee-fav-pdp{cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;font-size:12px;font-weight:700;line-height:1.38;text-transform:uppercase;padding:6px 0;color:rgb(124,126,143);letter-spacing:normal}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp .ee-fav-pdp-label,.ee-fav-pdp-fallback a.link-icon.ee-fav-pdp .ee-fav-pdp-label{text-decoration:underline}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp::before,.ee-fav-pdp-fallback a.link-icon.ee-fav-pdp::before{content:\"♡\";display:inline-block;margin-right:.35em;text-decoration:none !important;font-weight:400;font-size:12px;line-height:1;color:rgb(124,126,143)}" +
+      "\n.social-buttons-wrapper .link-icons a.link-icon.ee-fav-pdp.is-on::before,.ee-fav-pdp-fallback a.link-icon.ee-fav-pdp.is-on::before{content:\"❤\";color:#dc2626}" +
       "\n.ee-fav-pdp-fallback-host{position:relative}" +
       "\n.ee-fav-pdp-fallback{position:absolute;right:0;top:0;z-index:2}" +
       "\n.ee-fav-pdp-fallback a.link-icon.ee-fav-pdp{align-self:flex-end}" +

@@ -10,8 +10,24 @@
 
   var STACK_ID = "ee-feature-launchers";
   var STYLE_ID = "ee-launcher-stack-style";
-  var BULK_CLEAR_PX = 56;
+  /** Clearance above the bulk FAB (px); paired with shoptet-bulk-cart syncFloatingClearance. */
+  var BULK_CLEAR_PX = 88;
   var reorderTimer = null;
+  var relayoutTimer = null;
+
+  function emitLauncherRelayout() {
+    try {
+      document.dispatchEvent(new CustomEvent("ee-launcher-relayout", { bubbles: false }));
+    } catch (_e) {}
+  }
+
+  function scheduleRelayoutEmit() {
+    if (relayoutTimer) clearTimeout(relayoutTimer);
+    relayoutTimer = setTimeout(function () {
+      relayoutTimer = null;
+      emitLauncherRelayout();
+    }, 40);
+  }
 
   function ensureHost() {
     var host = document.getElementById(STACK_ID);
@@ -70,15 +86,28 @@
     reorderTimer = setTimeout(function () {
       reorderTimer = null;
       reorder();
+      scheduleRelayoutEmit();
     }, 0);
+  }
+
+  function setupStackResizeObserver() {
+    if (typeof ResizeObserver === "undefined") return;
+    var host = document.getElementById(STACK_ID);
+    if (!host || host.__eeLauncherResizeObs) return;
+    var ro = new ResizeObserver(function () {
+      scheduleRelayoutEmit();
+    });
+    ro.observe(host);
+    host.__eeLauncherResizeObs = ro;
   }
 
   ensureHost();
   ensureStyle();
   scheduleReorder();
+  setupStackResizeObserver();
 
   window.EE_LAUNCHER_STACK = {
-    version: "2026-04-25-launcher-v1",
+    version: "2026-04-25-launcher-v2",
     STACK_ID: STACK_ID,
     ensureHost: ensureHost,
     ensureStyle: ensureStyle,

@@ -22,7 +22,7 @@
   const DRAWER_ID = "shoptet-bulk-cart-drawer";
   const STORAGE_KEY = "shoptet-bulk-cart-v2";
   const STYLE_ID = "shoptet-bulk-cart-style";
-  const VERSION = "2026-04-21-responsive-zindex-modern-ui-pass";
+  const VERSION = "2026-04-25-bulk-clearance-fab-align";
   const RENDER_MODE = String(window.EE_BULK_RENDER_MODE || "all-except-home").toLowerCase();
 
   function shouldRenderBulk() {
@@ -580,6 +580,22 @@
   align-items: center;
   margin: 0 0 14px 0;
 }
+#${ENTRY_HOST_ID}.bulk-floating {
+  flex-direction: column;
+  align-items: stretch;
+  width: min(calc(100vw - 28px), 320px);
+  margin: 0;
+  box-sizing: border-box;
+}
+#${ENTRY_HOST_ID}.bulk-floating #${FAB_ID} {
+  width: 100%;
+  max-width: none;
+  border-radius: 999px;
+  height: 38px;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+}
 #${FAB_ID} {
   position: relative;
   border: none; border-radius: 10px; background: #111827; color: #fff; font-weight: 700;
@@ -788,13 +804,6 @@
 @media (max-width: 980px) {
   #${ENTRY_HOST_ID}.bulk-in-cart { justify-content: stretch; margin-bottom: 10px; width: 100%; }
   #${ENTRY_HOST_ID}.bulk-in-cart #${FAB_ID} { width: 100%; justify-content: center; font-size: 14px; }
-  #${ENTRY_HOST_ID}.bulk-floating #${FAB_ID} {
-    width: auto;
-    max-width: min(72vw, 260px);
-    justify-content: center;
-    font-size: 13px;
-    padding: 0 12px;
-  }
   #${DRAWER_ID} {
     width: calc(100vw - 20px);
     max-width: calc(100vw - 20px);
@@ -991,6 +1000,32 @@
     activeCartContainer = null;
   }
 
+  const syncFloatingClearance = throttleRaf(() => {
+    if (!entryHost.classList.contains("bulk-floating")) return;
+    const stack = document.getElementById("ee-feature-launchers");
+    const gap = 12;
+    const fabH = Math.round(fab.getBoundingClientRect().height) || 40;
+    const innerH = window.innerHeight;
+    const defaultBase = 12;
+    if (!stack || !stack.isConnected) {
+      entryHost.style.bottom = "max(12px, env(safe-area-inset-bottom, 0px))";
+      return;
+    }
+    const sr = stack.getBoundingClientRect();
+    const floTopAtDefault = innerH - defaultBase - fabH;
+    const mustLift = floTopAtDefault < sr.bottom + gap;
+    let base = defaultBase;
+    if (mustLift) {
+      const computed = Math.round(innerH - sr.bottom - gap - fabH);
+      base = Math.max(defaultBase, computed);
+    }
+    if (base <= defaultBase) {
+      entryHost.style.bottom = "max(12px, env(safe-area-inset-bottom, 0px))";
+      return;
+    }
+    entryHost.style.bottom = `calc(${base}px + env(safe-area-inset-bottom, 0px))`;
+  });
+
   function applyEntryHostLayout() {
     ensureEntryHostMounted();
     if (!activeCartContainer) {
@@ -999,14 +1034,17 @@
       entryHost.style.position = "fixed";
       entryHost.style.left = "14px";
       entryHost.style.right = "auto";
-      entryHost.style.bottom = "max(12px, env(safe-area-inset-bottom, 0px))";
       entryHost.style.top = "auto";
-      entryHost.style.width = "auto";
+      entryHost.style.width = "";
       entryHost.style.zIndex = "1250";
+      requestAnimationFrame(() => {
+        requestAnimationFrame(syncFloatingClearance);
+      });
       return;
     }
     entryHost.classList.add("bulk-in-cart");
     entryHost.classList.remove("bulk-floating");
+    entryHost.style.bottom = "";
 
     const originalCartPaddingTop = cartPaddingTopMap.get(activeCartContainer) || 0;
     const currentPosition = window.getComputedStyle(activeCartContainer).position;
@@ -1642,6 +1680,7 @@
     positionDrawer();
   });
   window.addEventListener("resize", onResize);
+  document.addEventListener("ee-launcher-relayout", syncFloatingClearance);
   const refreshHostLayout = throttleRaf(() => {
     applyEntryHostLayout();
   });
