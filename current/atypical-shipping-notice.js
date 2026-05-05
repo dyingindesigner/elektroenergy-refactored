@@ -197,9 +197,11 @@
     if (!isAtypicalCode(code, set)) return;
 
     var anchor =
-      document.querySelector('.add-to-cart button') ||
-      document.querySelector('button[type="submit"][name*="amount"]') ||
+      document.querySelector('.add-to-cart .add-to-cart-button') ||
+      document.querySelector('.add-to-cart button[type="submit"]') ||
+      document.querySelector('button[data-testid="buttonAddToCart"]') ||
       document.querySelector('.dkLabAddProductDetailToCart') ||
+      document.querySelector('button[type="submit"][name*="amount"]') ||
       document.querySelector('.price-final');
 
     ensureStyles();
