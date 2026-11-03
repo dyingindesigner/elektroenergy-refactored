@@ -18,7 +18,7 @@
   'use strict';
   var core = window.EE_CORE || {};
   // EE-only additions; the existing shared JSON list remains unchanged.
-  var EXTRA_CODES = ["LKD480TREE","KMF4LED240","KMF8LED240","KMF4LED210","KMF8LED210","KMF4/180","KMF7/180","KMF4LED180","KMF8LED180","SMF180","KMF4LED150","KMF8LED150","KIX120LED"];
+  var EXTRA_CODES = ["LKD480TREE","KMF4LED240","KMF8LED240","KMF4LED210","KMF8LED210","KMF4/180","KMF7/180","KMF4LED180","KMF8LED180","SMF180","KMF4LED150","KMF8LED150"];
   function normalizeSku(value) { return String(value || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
   function codeFromText(value, set) {
     var text=String(value||'');try{text=decodeURIComponent(text);}catch(ignore){}
